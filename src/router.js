@@ -50,11 +50,13 @@ let router =  new Router({
 // Checks whether API token is valid or not before going to a route
 router.beforeEach((to, from, nxt) => {
   let usrToken = localStorage.getItem('jTokn');
-  
+
   if(!usrToken) generateToken();
   else checkToken();
 
-  nxt();
+  if(store.state.token) nxt();
+
+  nxt(false);
 });
 
 export default router
