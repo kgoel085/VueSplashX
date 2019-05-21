@@ -6,7 +6,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    token: localStorage.getItem('jTokn')
+    token: localStorage.getItem('jTokn'),
+    tokenErr: null
   },
   mutations: {
     setToken(state, usrTkn){
@@ -15,9 +16,11 @@ export default new Vuex.Store({
         state.token = usrTkn;
       }
     },
-    removeToken(state){
+    removeToken(state, msg){
       localStorage.removeItem("jTokn");
       state.token = null;
+
+      if(msg) state.tokenErr = msg;
     }
   },
   actions: {
@@ -27,7 +30,21 @@ export default new Vuex.Store({
       await Axios.post('/generateToken', loginDt).then(resp => {
         if(resp.data.success.token) commit('setToken', resp.data.success.token);
       }).catch(error => {
-        //console.log(error);
+        let errorMsg;
+
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          var dataArr = error.response.data;
+
+          if(typeof dataArr == 'object') errorMsg = 'Unable to connect to the server !';
+          else errorMsg = dataArr.error;
+        }else {
+          // Something happened in setting up the request that triggered an Error
+          errorMsg = error.message;
+        }
+
+        commit('removeToken', errorMsg);
       });
     }
   }
