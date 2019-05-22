@@ -11,6 +11,20 @@ axios.defaults.headers.common['Accepts'] = 'application/json';
 
 Vue.config.productionTip = false
 
+// Global vue mixin
+Vue.mixin({
+
+  computed:{
+
+    // Returns API token 
+    apiKey(){
+      if(store.state.token) return store.state.token;
+      return false;
+    }
+  }
+
+})
+
 new Vue({
   router,
   store,
