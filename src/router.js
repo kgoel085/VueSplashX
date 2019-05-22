@@ -1,30 +1,23 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
 import store from './store'
+import Axios from 'axios'
 
-Vue.use(Router)
+Vue.use(Router);
 
-// Generates a new API token
-const generateToken = async () => {
-  await store.dispatch('generateToken');
-};
-
-// Check if token is expired or not , if yes, clear previous one and get new one
-const checkToken = async() => {
-  let tmpVars = (localStorage.getItem('jTokn')) ? JSON.parse(atob(localStorage.getItem('jTokn').split('.')[1])) : false;
-
-  if(tmpVars){
-    //Check the expiry time
-    let currentTime = (new Date().getTime() / 1000).toFixed(0);
-
-    // If expired
-    if(currentTime > tmpVars.exp){
-      //Remove current & generate new one
-      store.commit('removeToken');
-      await generateToken();
+// Generates a new API token 
+const generateToken = async (nxtFunc) => {
+  let loginDt = {email: process.env.VUE_APP_EMAIL, password: process.env.VUE_APP_PASSWORD, account: process.env.VUE_APP_ACCOUNT};
+  await Axios.post('/generateToken', loginDt).then(resp => {
+    if(resp.data.success.token){
+      localStorage.setItem(process.env.VUE_APP_TOKEN_KEY, resp.data.success.token);
+      nxtFunc();
     }
-  }
+  }).catch(error => {
+    store.commit('removeToken', 'Error in connection.');
+
+    nxtFunc(false);
+  });
 };
 
 let router =  new Router({
@@ -34,7 +27,7 @@ let router =  new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: () => import('./views/Home.vue')
     },
     {
       path: '/about',
@@ -49,14 +42,35 @@ let router =  new Router({
 
 // Checks whether API token is valid or not before going to a route
 router.beforeEach((to, from, nxt) => {
-  let usrToken = localStorage.getItem('jTokn');
+  let usrToken = localStorage.getItem(process.env.VUE_APP_TOKEN_KEY);
 
-  if(!usrToken) generateToken();
-  else checkToken();
+  if(!usrToken){
 
-  if(store.state.token) nxt();
+    // Generate new token, if no token found 
+    generateToken(nxt);
+    return false;
 
-  nxt(false);
+  }else{
+    //Extract token vars
+    let tmpVars = JSON.parse(atob(usrToken.split('.')[1]));
+    if(tmpVars){
+
+      //Check the expiry time
+      let currentTime = (new Date().getTime() / 1000).toFixed(0);
+  
+      // If expired
+      if(currentTime > tmpVars.exp){
+
+        //Remove current & generate new one
+        store.commit('removeToken');
+        generateToken(nxt);
+
+        return false;
+      }
+    }
+  }
+  
+  nxt();
 });
 
 export default router
