@@ -1,7 +1,7 @@
 <template>
     <nav>
         <v-toolbar app dense fixed>
-            <v-toolbar-side-icon @click="showNav = !showNav"></v-toolbar-side-icon>
+            <v-toolbar-side-icon @click="showNav = !showNav" :disabled="!apiKey"></v-toolbar-side-icon>
             <v-toolbar-title class="headline text-uppercase">
                 <span class="primary--text">VUE </span>
                 <span class="font-weight-light secondary--text">SPLASH X</span>
@@ -21,7 +21,7 @@
                     </v-layout>
                 </v-list-tile>
                 
-                <v-list-tile v-for="item in listItems" :key="item.title" router :to="item.path">
+                <v-list-tile v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
                     <v-list-tile-actions>
                         <v-icon left color="white">
                             {{ item.icon }}
