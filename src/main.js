@@ -9,6 +9,25 @@ import axios from 'axios'
 axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 axios.defaults.headers.common['Accepts'] = 'application/json';
 
+//Axios Interceptors
+axios.interceptors.request.use(config => {
+  // Start loading the request
+  store.commit('setReqLoader', true);
+
+  //Attach auth token in the headers
+  if (store.state.token) config.headers.Authorization = `Bearer ${store.state.token}`;
+    
+
+  return config;
+});
+
+axios.interceptors.response.use(res => {
+  // Finish the request
+  store.commit('setReqLoader', false);
+  
+  return res;
+});
+
 Vue.config.productionTip = false
 
 // Global vue mixin
