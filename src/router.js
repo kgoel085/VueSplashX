@@ -10,7 +10,7 @@ const generateToken = async (nxtFunc) => {
   let loginDt = {email: process.env.VUE_APP_EMAIL, password: process.env.VUE_APP_PASSWORD, account: process.env.VUE_APP_ACCOUNT};
   await Axios.post('/generateToken', loginDt).then(resp => {
     if(resp.data.success.token){
-      localStorage.setItem(process.env.VUE_APP_TOKEN_KEY, resp.data.success.token);
+      store.commit('setToken', resp.data.success.token);
       nxtFunc();
     }
   }).catch(error => {
@@ -40,9 +40,9 @@ let router =  new Router({
   ]
 })
 
-// Checks whether API token is valid or not before going to a route
 router.beforeEach((to, from, nxt) => {
-  let usrToken = localStorage.getItem(process.env.VUE_APP_TOKEN_KEY);
+  // Checks whether API token is valid or not before going to a route
+  let usrToken = store.state.token;
 
   if(!usrToken){
 
@@ -71,6 +71,12 @@ router.beforeEach((to, from, nxt) => {
   }
   
   nxt();
+});
+
+router.afterEach((to, frm) => {
+  //Check if side navbar is open or not
+  let navStat = store.state.showSideBar;
+  if(navStat) store.commit('setSideBar', !navStat);
 });
 
 export default router
