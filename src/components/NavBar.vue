@@ -17,7 +17,7 @@
         </v-toolbar>
 
         <!-- Side Drawer -->
-        <v-navigation-drawer app v-model="showNav" class="primary">
+        <v-navigation-drawer app right v-model="showNav" class="primary">
             <v-list>
                 <!-- Logo -->
                 <v-list-tile class="pa-5">
