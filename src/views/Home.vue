@@ -51,9 +51,15 @@ export default {
   methods:{
     // Retreive photos 
     getData(){
-      axios.get('/photos', this.params).then(resp => {
+      axios.get('/photos', {params: this.params}).then(resp => {
         let vm = this;
         let data = resp.data.success.data;
+
+        // Check for pagination info
+        if(resp.data.success.hasOwnProperty('extra_info')){
+          let pgInfo = resp.data.success.extra_info.pagination;
+          if(pgInfo.hasOwnProperty('page')) vm.params.page = pgInfo.page;
+        }
 
         if(data.length > 0){
           data.forEach(element => {
@@ -67,7 +73,13 @@ export default {
     }
   },
   mounted(){
+    let vm = this;
     if(this.apiKey) this.getData();
+
+    // On scroll, call next batch
+    window.onscroll = function(ev) {
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && !vm.tokenExpired) vm.getData();
+    };
   }
 }
 </script>
