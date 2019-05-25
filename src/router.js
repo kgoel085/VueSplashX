@@ -69,6 +69,9 @@ router.beforeEach((to, from, nxt) => {
       }
     }
   }
+
+  // Reset API error msg before hitting API request
+  if(store.state.apiErr) store.commit('setApiErr', null);
   
   nxt();
 });
