@@ -1,11 +1,13 @@
 <template>
   <v-app>
+    <!-- Main content container -->
+    <v-content>
+      <!-- Header & Navbar  -->
+      <NavBar/>
 
-    <!-- Header & Navbar  -->
-    <NavBar/>
-
-    <!-- Router views -->
-    <router-view class="mt-4"></router-view>
+      <!-- Router views -->
+      <router-view></router-view>
+    </v-content>
 
     <!-- Connection snackbar -->
     <v-snackbar v-model="connSnackbar" top right color="red" class="white--text" :timeout = 0>
@@ -20,7 +22,6 @@
       <span left>{{ apiError }}</span>
       <!-- <v-icon right class="white--text" flat @click="snackbar = false">close</v-icon> -->
     </v-snackbar>
-
   </v-app>
 </template>
 
