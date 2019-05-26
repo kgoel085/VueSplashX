@@ -7,6 +7,10 @@
 
       <!-- Router views -->
       <router-view></router-view>
+
+      <!-- Live Stat Block -->
+      <LiveStat class="hidden-sm-and-down" />
+
     </v-content>
 
     <!-- Connection snackbar -->
@@ -27,11 +31,13 @@
 
 <script>
 import NavBar from './components/NavBar'
+import LiveStat from './components/LiveStat'
 
 export default {
   name: 'App',
   components: {
-    NavBar
+    NavBar,
+    LiveStat
   },
   data () {
     return {
