@@ -4,13 +4,23 @@
             <v-icon @click="showBox = !showBox" hover class="dragHandle jump" size="40" color="white">drag_handle</v-icon>
         </v-flex>
         <v-slide-y-reverse-transition>
-            <v-flex xs12 align-content-center v-show="showBox" class="px-2 pb-1">
-                <v-card tile raised>
-                    <v-card-text>
-                        
-                    </v-card-text>
-                </v-card>
-            </v-flex>
+            <v-layout row wrap v-show="showBox" class="px-2 pb-1">
+                <v-flex xs12>
+                    <v-tabs v-model="activeTab" slider-color="primary" fixed-tabs>
+                        <v-tab v-for="tab in tabArr" :key="tab.id">
+                            {{ tab.title }}
+                        </v-tab>
+
+                        <v-tabs-items v-model="activeTab">
+                            <v-tab-item v-for="tab in tabArr" :key="tab.id">
+                                <v-card flat >
+                                    <v-card-text>Test Tab Test - {{ tab.title }} - {{ activeTab }}</v-card-text>
+                                </v-card>
+                            </v-tab-item>
+                        </v-tabs-items>
+                    </v-tabs>
+                </v-flex>
+            </v-layout>
         </v-slide-y-reverse-transition>
     </v-layout>
 </template>
@@ -19,7 +29,13 @@
 export default {
     data(){
         return {
-            showBox: false
+            showBox: false,
+            activeTab: null,
+            tabArr:[
+                {title: 'Top Collections', id: 'collections'},
+                {title: 'Top Photographers', id: 'photographers'},
+                {title: 'Data Stats', id: 'stats'},
+            ]
         }
     },
     watch:{
