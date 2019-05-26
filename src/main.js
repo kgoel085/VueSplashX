@@ -46,7 +46,7 @@ Vue.mixin({
       let mainObj = this.$vuetify.breakpoint;
       let returnVal = {
         height: 0,
-        size: 12,
+        size: 4,
         breakpoint: mainObj.name,
 
         // full - Returns img with max resolution
@@ -58,7 +58,7 @@ Vue.mixin({
       };
       
       // Image height
-      if(mainObj.height) returnVal.height = mainObj.height;
+      if(mainObj.height) returnVal.height = mainObj.height / 2;
 
       // Manage size & breakpoint
       switch(mainObj.name){
@@ -71,15 +71,14 @@ Vue.mixin({
 
         case 'xs':
         case 'sm':
-
+          returnVal.size = 12;
         break;
 
         case 'md':
         case 'lg':
-          returnVal.size = 4;
+          returnVal.imgType = 'regular';
+        break;
         case 'xl':
-          returnVal.size = 4;
-          returnVal.height = returnVal.height / 2;
           returnVal.imgType = 'full';
         break;
       }
