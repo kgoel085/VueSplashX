@@ -1,8 +1,8 @@
 <template>
     <nav>
-        <v-toolbar app dense fixed flat>
+        <v-toolbar app dense fixed flat card>
             <!-- Sidebar / Navbar toggle -->
-            <v-toolbar-side-icon @click="showNav = !showNav" :disabled="!apiKey"></v-toolbar-side-icon>
+            <!-- <v-toolbar-side-icon @click="showNav = !showNav" :disabled="!apiKey"></v-toolbar-side-icon> -->
 
             <!-- Title -->
             <v-toolbar-title class="headline text-uppercase">
@@ -14,6 +14,12 @@
             <v-btn color="primary" flat :loading="true" v-if="reqLoader" />
 
             <v-spacer></v-spacer>
+
+            <v-toolbar-items class="hidden-sm-and-down">
+                <v-btn flat v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
+                    {{ item.title }}
+                </v-btn>
+            </v-toolbar-items>
         </v-toolbar>
 
         <!-- Side Drawer -->
