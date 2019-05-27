@@ -56,7 +56,7 @@ router.beforeEach((to, from, nxt) => {
     if(tmpVars){
 
       //Check the expiry time
-      let currentTime = (new Date().addMinutes(5).getTime() / 1000).toFixed(0);
+      let currentTime = (new Date(new Date(Date.now() + (5 * 60 * 1000))).getTime() / 1000).toFixed(0);
   
       // If expired
       if(currentTime > tmpVars.exp){
