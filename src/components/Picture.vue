@@ -1,6 +1,6 @@
 <template>
     <v-flex :[blockSize] = true class="pictureBlock">
-        <v-card :height="dimensionObj.height+'px'" class="pa-2 ma-2" flat :[showHover] = "imgLoaded" raised :img="blockImg">
+        <v-card :height="dimensionObj.height+'px'" class="pa-2 ma-2" flat :[showHover] = "imgLoaded" raised :img="blockImg" @click="showPic(data.id)">
             <Loader v-if="!imgLoaded"/>
             <template v-else>
                 <v-card-title primary-title class="px-0 pt-1 ma-0" >
@@ -110,6 +110,11 @@ export default {
 
             return returnVal;
         },
+    },
+    methods:{
+        showPic(id){
+            this.$store.commit('showPictureId', id);
+        }
     },
     props:{
         details:{
