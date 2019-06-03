@@ -1,22 +1,22 @@
 <template>
     <nav>
-        <v-toolbar app dense fixed flat card>
+        <v-toolbar app dense fixed flat card class="primary">
             <!-- Sidebar / Navbar toggle -->
             <!-- <v-toolbar-side-icon @click="showNav = !showNav" :disabled="!apiKey"></v-toolbar-side-icon> -->
 
             <!-- Title -->
             <v-toolbar-title class="headline text-uppercase">
-                <span class="primary--text">VUE </span>
+                <span class="blue--text">VUE </span>
                 <span class="font-weight-light secondary--text">SPLASH X</span>
             </v-toolbar-title>
 
             <!-- Request Loader -->
-            <v-btn color="primary" flat :loading="true" v-if="reqLoader" />
+            <v-btn color="secondary" flat :loading="true" v-if="reqLoader" />
 
             <v-spacer></v-spacer>
 
             <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
+                <v-btn flat class="white--text" v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
                     {{ item.title }}
                 </v-btn>
             </v-toolbar-items>
