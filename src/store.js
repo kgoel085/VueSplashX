@@ -18,7 +18,10 @@ export default new Vuex.Store({
     reqLoading: false,
 
     // Stores any error in API request
-    apiErr: null
+    apiErr: null,
+
+    // Show picture
+    showPic: null
   },
   mutations: {
     // Set API token
@@ -50,6 +53,11 @@ export default new Vuex.Store({
     setApiErr(state, err = null){
       if(err && state.reqLoading) state.reqLoading = false;
       state.apiErr = err;
+    },
+
+    // Set Picture id to show
+    showPictureId(state, picId = null){
+      state.showPic = picId;
     }
   },
   actions: {

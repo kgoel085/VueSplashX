@@ -26,18 +26,23 @@
       <span left>{{ apiError }}</span>
       <!-- <v-icon right class="white--text" flat @click="snackbar = false">close</v-icon> -->
     </v-snackbar>
+
+    <!-- Dialog Box -->
+    <Dialog v-model="showDialog" v-if="showDialog"></Dialog>
   </v-app>
 </template>
 
 <script>
 import NavBar from './components/NavBar'
 import LiveStat from './components/LiveStat'
+import Dialog from './components/Dialog'
 
 export default {
   name: 'App',
   components: {
     NavBar,
-    LiveStat
+    LiveStat,
+    Dialog
   },
   data () {
     return {
@@ -79,6 +84,12 @@ export default {
           this.$store.commit('setApiErr', null);
         }
       }
+    },
+
+    // Handle the picture dialog box
+    showDialog(){
+      if(this.$store.state.showPic) return true;
+      return false;
     }
   }
 }
