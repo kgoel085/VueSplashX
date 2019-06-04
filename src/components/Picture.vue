@@ -114,6 +114,7 @@ export default {
     methods:{
         showPic(id){
             this.$store.commit('showPictureId', id);
+            this.$store.commit('setPicDetails', this.details);
         }
     },
     props:{
