@@ -48,9 +48,13 @@
                                     </v-slide-x-reverse-transition>
                                 </v-layout>
                             </v-list-tile>
-                            <v-btn right flat @click="showTruePic = !showTruePic" class="px-3 mr-3" fixed icon>
+                            <v-btn right flat @click="showTruePic = !showTruePic" class="px-3 mr-4 white--text" absolute icon>
                                 <v-icon v-if="showTruePic">fullscreen_exit</v-icon>
                                 <v-icon v-else>fullscreen</v-icon>
+                            </v-btn>
+
+                            <v-btn right flat @click="hideDialogBox()" class="px-3 mr-3 white--text" fixed icon>
+                                <v-icon>close</v-icon>
                             </v-btn>
                         </v-card-title>
 
