@@ -21,7 +21,10 @@ export default new Vuex.Store({
     apiErr: null,
 
     // Show picture
-    showPic: null
+    showPic: null,
+
+    // If set, then picture details will be used from here, else showPic will be used
+    picObj: null
   },
   mutations: {
     // Set API token
@@ -58,6 +61,11 @@ export default new Vuex.Store({
     // Set Picture id to show
     showPictureId(state, picId = null){
       state.showPic = picId;
+    },
+
+    // Store the current picture object
+    setPicDetails(state, obj = null){
+      state.picObj = obj
     }
   },
   actions: {
