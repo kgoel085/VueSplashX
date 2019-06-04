@@ -46,6 +46,7 @@ Vue.mixin({
       let mainObj = this.$vuetify.breakpoint;
       let returnVal = {
         height: 0,
+        origHeight: 0,
         size: 4,
         breakpoint: mainObj.name,
 
@@ -58,7 +59,10 @@ Vue.mixin({
       };
       
       // Image height
-      if(mainObj.height) returnVal.height = mainObj.height / 2;
+      if(mainObj.height){
+        returnVal.height = mainObj.height / 2;
+        returnVal.origHeight = mainObj.height;
+      }
 
       // Manage size & breakpoint
       switch(mainObj.name){
