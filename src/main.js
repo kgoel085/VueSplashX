@@ -30,6 +30,24 @@ axios.interceptors.response.use(res => {
 
 Vue.config.productionTip = false
 
+//Returns whole number in count format ( Million, Billion, Thousands etc )
+Vue.filter('countNumber', (value = 0) => {
+  // Nine Zeroes for Billions
+  return Math.abs(Number(value)) >= 1.0e+9
+
+  ? (Math.abs(Number(value)) / 1.0e+9).toFixed(0) + " B"
+  // Six Zeroes for Millions 
+  : Math.abs(Number(value)) >= 1.0e+6
+
+  ? (Math.abs(Number(value)) / 1.0e+6).toFixed(0) + " M"
+  // Three Zeroes for Thousands
+  : Math.abs(Number(value)) >= 1.0e+3
+
+  ? (Math.abs(Number(value)) / 1.0e+3).toFixed(0) + " K"
+
+  : Math.abs(Number(value));
+});
+
 // Global vue mixin
 Vue.mixin({
 
