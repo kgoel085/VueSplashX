@@ -90,6 +90,8 @@ router.afterEach((to, frm) => {
   //Check if side navbar is open or not
   let navStat = store.state.showSideBar;
   if(navStat) store.commit('setSideBar', !navStat);
+
+  if(store.state.showPic) store.commit('showPictureId', null);
 });
 
 export default router
