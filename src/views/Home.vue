@@ -1,18 +1,5 @@
 <template>
   <div class="home">
-    <!-- <v-toolbar flat>
-      <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn-toggle v-model="currentLayout" right>
-					<v-btn flat>
-						<v-icon class="mt-1">view_column</v-icon>
-					</v-btn>
-					<v-btn flat>
-						<v-icon class="mt-1">view_stream</v-icon>
-					</v-btn>
-        </v-btn-toggle>
-      </v-toolbar-items>
-    </v-toolbar> -->
     <v-container fluid class="pa-1" :disabled="!apiKey">
       <v-layout :[layout]=true wrap v-if="dataObj.length > 0">
           <Picture v-for="(data, indx) in dataObj" :key="indx" :details=data></Picture>
