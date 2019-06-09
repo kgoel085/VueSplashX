@@ -1,6 +1,6 @@
 <template>
     <nav>
-        <v-toolbar app dense fixed flat card class="primary">
+        <v-toolbar app dense fixed flat card class="primary navBar">
             <!-- Sidebar / Navbar toggle -->
             <!-- <v-toolbar-side-icon @click="showNav = !showNav" :disabled="!apiKey"></v-toolbar-side-icon> -->
 
@@ -83,5 +83,7 @@ export default {
 </script>
 
 <style>
-
+    .navBar{
+        z-index: 99
+    }
 </style>

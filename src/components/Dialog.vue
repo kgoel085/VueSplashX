@@ -48,9 +48,7 @@
                                                             </v-flex>
                                                             <v-flex xs12 v-else>
                                                                 <v-layout row wrap>
-                                                                    <v-flex class="grow" v-for="(collection, indx) in tabContent"  :key="indx">
-                                                                        <Collection :obj="collection"></Collection>
-                                                                    </v-flex>
+                                                                    <Collection :obj="collection" v-for="(collection, indx) in tabContent"  :key="indx"></Collection>
                                                                 </v-layout>
                                                             </v-flex>
                                                         </v-layout>
