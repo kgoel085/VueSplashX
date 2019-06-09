@@ -4,7 +4,7 @@
             <Loader v-if="!imgLoaded"/>
             <template v-else>
                 <v-card-title primary-title class="px-0 pt-1 ma-0" >
-                    <UserAvatar :obj="data.user"></UserAvatar>
+                    <UserAvatar :obj="data"></UserAvatar>
                 </v-card-title>
             </template>
         </v-card>
