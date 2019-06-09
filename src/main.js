@@ -24,6 +24,9 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(res => {
   // Finish the request
   store.commit('setReqLoader', false);
+
+  // Clear error message
+  if(store.state.apiErr) store.commit('setApiErr', null);
   
   return res;
 });
