@@ -4,39 +4,8 @@
             <Loader v-if="!imgLoaded"/>
             <template v-else>
                 <v-card-title primary-title class="px-0 pt-1 ma-0" >
-                    <v-list-tile left class="grow">
-                        <!-- Show user with name -->
-                        <v-chip color="teal" text-color="white" @click.stop="showUser = !showUser">
-                            <v-avatar :size="userChipSize">
-                                <img :src="userImg" alt="trevor">
-                            </v-avatar>
-                            <v-slide-x-transition>
-                                <span v-if="showUser">
-                                    {{ data.user.name }}
-                                </span>
-                            </v-slide-x-transition>
-                        </v-chip>
-
-                        <!-- Social Details -->
-                        <v-slide-y-transition>
-                            <v-layout align-center justify-end v-show="showUser">
-                                <v-chip v-model="showUser" flat light color="white--text red " @click="showUser = false">
-                                    <v-icon left>favorite</v-icon>
-                                    <span right class="subheading mr-2 white--text font-weight-heavy">{{ data.likes }}</span>
-                                </v-chip>
-                            </v-layout>
-                        </v-slide-y-transition>
-                    </v-list-tile>
+                    <UserAvatar :obj="data.user"></UserAvatar>
                 </v-card-title>
-
-                <!-- Sponsered texts -->
-                <v-slide-y-reverse-transition>
-                    <v-card-text class="bottomSection" v-show="showUser">
-                        <v-flex xs12 v-if="captionText">
-                            <v-btn small left color="teal white--text">{{ captionText }}</v-btn>
-                        </v-flex>
-                    </v-card-text>
-                </v-slide-y-reverse-transition>
             </template>
         </v-card>
     </v-flex>
@@ -44,31 +13,18 @@
 
 <script>
 import Loader from '../components/Loader';
+import UserAvatar from '../components/UserAvatar';
+
 export default {
     data(){
         return {
             imgLoaded: false,
-            showHover: 'hover',
-            showUser: false,
-            userChipSize: 200,
-            userIntervalObj: null,
-            userHideInterval:3000
-        }
-    },
-    watch:{
-        showUser(val){
-            var vm =this;
-            if(val){
-                vm.userIntervalObj = setInterval(() => {
-                    vm.showUser = false;
-                }, vm.userHideInterval);
-            }else{
-                if(vm.userIntervalObj) clearInterval(vm.userIntervalObj);
-            }
+            showHover: 'hover'
         }
     },
     components:{
-        Loader
+        Loader,
+        UserAvatar
     },
     computed:{
         data(){
@@ -87,29 +43,7 @@ export default {
                 return img;
             }
             return false;
-        },
-        userImg(){
-            switch(this.dimensionObj.imgType){
-                case 'full':
-                case 'regular':
-                case 'small':
-                    return this.data.user.profile_image.large+'&auto=format';
-                break;
-                default:
-                    return this.data.user.profile_image.medium+'&auto=format';
-            }
-        },
-        captionText(){
-            let returnVal = "";
-            if(this.data.sponsored){
-                if(this.data.sponsored_by.twitter_username && !returnVal) returnVal = 'Sponsered by @'+this.data.sponsored_by.twitter_username;
-                if(this.data.sponsored_by.name) returnVal = this.data.sponsored_by.name;
-            }
-            
-            if(this.data.user.twitter_username && !returnVal) returnVal = '@'+this.data.user.twitter_username;
-
-            return returnVal;
-        },
+        }
     },
     methods:{
         showPic(id){
