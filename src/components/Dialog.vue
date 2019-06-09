@@ -65,78 +65,65 @@
                                             {{ tab.title }}
                                         </v-tab>
                                     </v-tabs>
-                                    
-                                    <v-slide-y-reverse-transition>
-                                        <v-layout row wrap v-if="Object.keys(tabContent).length > 0">
-                                            <v-flex xs12>
-                                                <template v-if="currentTab == 0">
-                                                    <v-layout row wrap>
-                                                        <v-flex xs12 v-if="!tabContent">
-                                                            <v-card>
-                                                                No Content found
-                                                            </v-card>
-                                                        </v-flex>
-                                                        <v-flex class="grow" v-else v-for="(collection, indx) in tabContent"  :key="indx">
-                                                            <v-card class="pa-2 ma-2">
-                                                                <v-card-title>
-                                                                    {{ collection.title }}
-                                                                </v-card-title>
-                                                                <v-card-text>
-                                                                    <v-carousel>
-                                                                        <v-carousel-item
-                                                                        v-for="(item,i) in collection.preview_photos"
-                                                                        :key="i"
-                                                                        :src="item.urls[dimensionObj.imgType]"
-                                                                        >
-                                                                        </v-carousel-item>
-                                                                    </v-carousel>
-                                                                </v-card-text>
-                                                                
-                                                            </v-card>
-                                                        </v-flex>
-                                                    </v-layout>
-                                                </template>
+                                    <keep-alive>
+                                        <v-slide-y-reverse-transition>
+                                            <v-layout row wrap v-if="Object.keys(tabContent).length > 0">
+                                                <v-flex xs12>
+                                                    <template v-if="currentTab == 0">
+                                                        <v-layout row wrap>
+                                                            <v-flex xs12 v-if="!tabContent">
+                                                                <v-card>
+                                                                    No Content found
+                                                                </v-card>
+                                                            </v-flex>
+                                                            <v-flex class="grow" v-else v-for="(collection, indx) in tabContent"  :key="indx">
+                                                                <Collection :obj="collection"></Collection>
+                                                            </v-flex>
+                                                        </v-layout>
+                                                    </template>
 
-                                                <template v-if="currentTab == 1">
-                                                    <v-layout row wrap>
-                                                        <v-flex xs4 v-for="(blck, indx) in tabContent" :key="indx">
-                                                            <v-card hover flat class="pa-2 ma-1">
-                                                                <strong class="text-capitalize grey--text">{{ indx.replace('_', ' ') }}: </strong> <span class="">{{ (blck) ? (blck) : '--' }}</span>
-                                                            </v-card>
-                                                        </v-flex>
-                                                    </v-layout>
+                                                    <template v-if="currentTab == 1">
+                                                        <v-layout row wrap>
+                                                            <v-flex xs4 v-for="(blck, indx) in tabContent" :key="indx">
+                                                                <v-card hover flat class="pa-2 ma-1">
+                                                                    <strong class="text-capitalize grey--text">{{ indx.replace('_', ' ') }}: </strong> <span class="">{{ (blck) ? (blck) : '--' }}</span>
+                                                                </v-card>
+                                                            </v-flex>
+                                                        </v-layout>
 
-                                                    <v-layout row wrap v-if="data.tags.length > 0" class="pa-1">
-                                                        <v-flex xs12>
-                                                            <v-chip @click="showTags = !showTags">
-                                                                Related Tags
-                                                            </v-chip>
-                                                            <v-slide-y-transition>
-                                                                <v-tabs
-                                                                    show-arrows
-                                                                    class="secondary"
-                                                                    v-if="showTags"
-                                                                >
-                                                                    <v-tabs-slider color="primary"></v-tabs-slider>
-
-                                                                    <v-tab
-                                                                    v-for="(tag, indx) in data.tags"
-                                                                    :key="indx"
+                                                        <v-layout row wrap v-if="data.tags.length > 0" class="pa-1">
+                                                            <v-flex xs12>
+                                                                <v-chip @click="showTags = !showTags">
+                                                                    Related Tags
+                                                                </v-chip>
+                                                                <v-slide-y-transition>
+                                                                    <v-tabs
+                                                                        show-arrows
+                                                                        class="secondary"
+                                                                        v-if="showTags"
                                                                     >
-                                                                    {{ tag.title }}
-                                                                    </v-tab>
-                                                                </v-tabs>
-                                                            </v-slide-y-transition>
-                                                        </v-flex>
-                                                    </v-layout>
-                                                </template>
+                                                                        <v-tabs-slider color="primary"></v-tabs-slider>
 
-                                                <template v-if="currentTab == 2">
-                                                    <PicStat :id="tabContent" v-if="tabContent"></PicStat>
-                                                </template>
-                                            </v-flex>
-                                        </v-layout>
-                                    </v-slide-y-reverse-transition>
+                                                                        <v-tab
+                                                                        v-for="(tag, indx) in data.tags"
+                                                                        :key="indx"
+                                                                        >
+                                                                        {{ tag.title }}
+                                                                        </v-tab>
+                                                                    </v-tabs>
+                                                                </v-slide-y-transition>
+                                                            </v-flex>
+                                                        </v-layout>
+                                                    </template>
+
+                                                    <template v-if="currentTab == 2">
+                                                        <PicStat :id="tabContent" v-if="tabContent"></PicStat>
+                                                    </template>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-slide-y-reverse-transition>
+                                    </keep-alive>
+                                    
                                 </v-flex>
                             </v-layout>
                         </v-card-text>
@@ -150,6 +137,7 @@
 <script>
 import axios from 'axios';
 import PicStat from '../components/PicStats';
+import Collection from '../components/Collection';
 
 export default {
     data(){
@@ -169,7 +157,8 @@ export default {
         }
     },
     components:{
-        PicStat
+        PicStat,
+        Collection
     },
     computed:{
         picId(){
