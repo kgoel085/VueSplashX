@@ -41,8 +41,6 @@ export default {
                     if(pgInfo.hasOwnProperty('page')) vm.params.page = pgInfo.page;
                 }
 
-                console.log(vm.params);
-
                 if(data.length > 0){
                     data.forEach(element => {
                         vm.data.push(element);
