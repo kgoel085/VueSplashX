@@ -6,7 +6,10 @@
       <NavBar/>
 
       <!-- Router views -->
-      <router-view></router-view>
+      <v-slide-x-transition>
+        <router-view></router-view>
+      </v-slide-x-transition>
+      
 
       <!-- Live Stat Block -->
       <LiveStat class="hidden-sm-and-down" />
