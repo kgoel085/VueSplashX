@@ -1,6 +1,6 @@
 <template>
     <v-layout row justify-center class="picDialog">
-        <v-dialog v-model="dialog" :fullscreen="$vuetify.breakpoint.smAndDown" light full-width :loading="loading" @input="v = v || hideDialogBox()" transition="dialog-bottom-transition">
+        <v-dialog v-model="dialog" :fullscreen="$vuetify.breakpoint.smAndDown" light full-width max-width="90%" :loading="loading" @input="v = v || hideDialogBox()" transition="dialog-bottom-transition">
             <v-layout row wrap>
                 <v-flex xs12>
                     <!-- Loader -->
@@ -14,7 +14,7 @@
                         ></v-progress-linear>
                         </v-card-text>
                     </v-card>
-                    <!-- Actuall content -->
+                    <!-- Actual content -->
                     <v-card flat v-else>
                         <v-card-title class="primary secondary--text pa-0 ma-0 px-1">
                             <v-list-tile>
@@ -76,8 +76,19 @@
                                                                     No Content found
                                                                 </v-card>
                                                             </v-flex>
-                                                            <v-flex class="grow" v-else v-for="(collection, indx) in tabContent"  :key="indx">
-                                                                <Collection :obj="collection"></Collection>
+                                                            <v-flex xs12 v-else>
+                                                                <v-layout row wrap>
+                                                                    <v-flex xs12>
+                                                                        <v-card flat tile>
+                                                                            <v-card-title class="pa-0 px-3 pt-3">
+                                                                                <strong>Collections</strong>
+                                                                            </v-card-title>
+                                                                        </v-card>
+                                                                    </v-flex>
+                                                                    <v-flex class="grow" v-for="(collection, indx) in tabContent"  :key="indx">
+                                                                        <Collection :obj="collection"></Collection>
+                                                                    </v-flex>
+                                                                </v-layout>
                                                             </v-flex>
                                                         </v-layout>
                                                     </template>
