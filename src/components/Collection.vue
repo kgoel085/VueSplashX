@@ -1,6 +1,6 @@
 <template>
     <v-flex :[blockSize] = true class="collection_mod">
-        <v-card flat tile hover ripple class="pa-1 ma-0" @click="showCollectionPic(data.id)">
+        <v-card flat tile hover ripple class="pa-1 ma-0">
             <v-carousel hide-delimiters class="collection_carousel">
                 <v-card light flat tile class="grow collection_details transparent top">
                     <v-card-title class="pa-1">
@@ -16,6 +16,7 @@
                 v-for="(item,i) in data.preview_photos"
                 :key="i"
                 :src="item.urls[dimensionObj.imgType]"
+                 @click="showCollectionPic(data.id)"
                 >
                 </v-carousel-item>
 
