@@ -17,37 +17,7 @@
                     <!-- Actual content -->
                     <v-card flat v-else>
                         <v-card-title class="primary secondary--text pa-0 ma-0 px-1">
-                            <v-list-tile>
-                                <v-list-tile-avatar color="grey darken-3 elevation-10" size="70" @click="showUser = !showUser">
-                                    <v-img
-                                        class="elevation-2"
-                                        :src="getImg('user')"
-                                    ></v-img>
-                                </v-list-tile-avatar>
-
-                                <v-list-content>
-                                    <v-slide-x-transition>
-                                        <v-chip class="font-weight-bold text-capitalize white--text" color="secondary" v-show="showUser">
-                                            <span>{{ '@'+data.user.name }}</span>
-                                        </v-chip>
-                                    </v-slide-x-transition>
-
-                                    <v-slide-y-transition>
-                                        <v-chip class="font-weight-bold text-capitalize" v-if="picDescription">
-                                            <span class="text-truncate">{{ picDescription }}</span>
-                                        </v-chip>
-                                    </v-slide-y-transition>
-                                </v-list-content>
-                                <v-spacer></v-spacer>
-                                <v-layout align-center justify-end>
-                                    <v-slide-x-reverse-transition>
-                                        <v-chip flat light color="white--text red" v-show="showUser">
-                                            <v-icon left>favorite</v-icon>
-                                            <span right class="subheading mr-2 white--text font-weight-heavy">{{ data.likes }}</span>
-                                        </v-chip>
-                                    </v-slide-x-reverse-transition>
-                                </v-layout>
-                            </v-list-tile>
+                            <UserAvatar :obj="data" :showDescription="true"></UserAvatar>
 
                             <v-btn right flat @click="hideDialogBox()" class="px-3 mr-0 white--text" absolute icon>
                                 <v-icon>close</v-icon>
@@ -78,13 +48,6 @@
                                                             </v-flex>
                                                             <v-flex xs12 v-else>
                                                                 <v-layout row wrap>
-                                                                    <v-flex xs12>
-                                                                        <v-card flat tile>
-                                                                            <v-card-title class="pa-0 px-3 pt-3">
-                                                                                <strong>Collections</strong>
-                                                                            </v-card-title>
-                                                                        </v-card>
-                                                                    </v-flex>
                                                                     <v-flex class="grow" v-for="(collection, indx) in tabContent"  :key="indx">
                                                                         <Collection :obj="collection"></Collection>
                                                                     </v-flex>
@@ -108,20 +71,7 @@
                                                                     Related Tags
                                                                 </v-chip>
                                                                 <v-slide-y-transition>
-                                                                    <v-tabs
-                                                                        show-arrows
-                                                                        class="secondary"
-                                                                        v-if="showTags"
-                                                                    >
-                                                                        <v-tabs-slider color="primary"></v-tabs-slider>
-
-                                                                        <v-tab
-                                                                        v-for="(tag, indx) in data.tags"
-                                                                        :key="indx"
-                                                                        >
-                                                                        {{ tag.title }}
-                                                                        </v-tab>
-                                                                    </v-tabs>
+                                                                    <Tags :obj="data.tags" v-if="showTags"></Tags>
                                                                 </v-slide-y-transition>
                                                             </v-flex>
                                                         </v-layout>
@@ -149,6 +99,8 @@
 import axios from 'axios';
 import PicStat from '../components/PicStats';
 import Collection from '../components/Collection';
+import Tags from '../components/Tag';
+import UserAvatar from '../components/UserAvatar';
 
 export default {
     data(){
@@ -156,11 +108,9 @@ export default {
             dialog: this.value,
             loading: true,
             data: null,
-            showUser: false,
-            zoomIcn: 'fullscreen',
             showTags: false,
             tabs: [
-                {title: 'Related'},
+                {title: 'Related Collections'},
                 {title: 'Info'},
                 {title: 'Stats'},
             ],
@@ -169,7 +119,9 @@ export default {
     },
     components:{
         PicStat,
-        Collection
+        Collection,
+        Tags,
+        UserAvatar
     },
     computed:{
         picId(){
@@ -190,15 +142,6 @@ export default {
         cardHeight(){
             if(this.dimensionObj.origHeight) return this.dimensionObj.origHeight
             return 0;
-        },
-        picDescription(){
-            var returnVal = null;
-            if(this.data.description) returnVal = this.data.description;
-            if(!returnVal && this.data.alt_description) returnVal = this.data.alt_description;
-
-            if(returnVal && returnVal.length > 100) returnVal = returnVal.substring(0, 100)+'...';
-
-            return returnVal;
         },
         tabContent(){
             let returnVal = {};
