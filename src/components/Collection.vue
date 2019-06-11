@@ -17,6 +17,7 @@
                 :key="i"
                 :src="item.urls[dimensionObj.imgType]"
                  @click="showCollectionPic(data.id)"
+                :alt="data.title"
                 >
                 </v-carousel-item>
 
