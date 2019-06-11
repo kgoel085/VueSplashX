@@ -34,29 +34,27 @@
                                         <v-tab v-for="(tab, indx) in tabs" :key="indx">
                                             {{ tab.title }}
                                         </v-tab>
-                                    </v-tabs>
-                                    <keep-alive>
-                                        <v-slide-y-reverse-transition>
-                                            <v-layout row wrap v-if="Object.keys(tabContent).length > 0">
+
+                                        <v-tab-item v-for="(tab, indx) in tabs" :key="indx">
+                                            <v-layout row wrap>
                                                 <v-flex xs12>
-                                                    <template v-if="currentTab == 0">
+                                                    <template v-if="indx == 0">
                                                         <v-layout row wrap>
-                                                            <v-flex xs12 v-if="!tabContent">
+                                                            <v-flex xs12 v-if="!data.hasOwnProperty('related_collections') || !data.related_collections.results">
                                                                 <v-card>
                                                                     No Content found
                                                                 </v-card>
                                                             </v-flex>
                                                             <v-flex xs12 v-else>
                                                                 <v-layout row wrap>
-                                                                    <Collection :obj="collection" v-for="(collection, indx) in tabContent"  :key="indx"></Collection>
+                                                                    <Collection :obj="collection" v-for="(collection, indx) in data.related_collections.results"  :key="indx"></Collection>
                                                                 </v-layout>
                                                             </v-flex>
                                                         </v-layout>
                                                     </template>
-
-                                                    <template v-if="currentTab == 1">
+                                                    <template v-if="indx == 1">
                                                         <v-layout row wrap>
-                                                            <v-flex xs4 v-for="(blck, indx) in tabContent" :key="indx">
+                                                            <v-flex xs4 v-for="(blck, indx) in data.exif" :key="indx">
                                                                 <v-card hover flat class="pa-2 ma-1">
                                                                     <strong class="text-capitalize grey--text">{{ indx.replace('_', ' ') }}: </strong> <span class="">{{ (blck) ? (blck) : '--' }}</span>
                                                                 </v-card>
@@ -75,14 +73,13 @@
                                                         </v-layout>
                                                     </template>
 
-                                                    <template v-if="currentTab == 2">
-                                                        <PicStat :id="tabContent" v-if="tabContent"></PicStat>
+                                                    <template v-if="indx == 2">
+                                                        <PicStat :id="picId"></PicStat>
                                                     </template>
                                                 </v-flex>
                                             </v-layout>
-                                        </v-slide-y-reverse-transition>
-                                    </keep-alive>
-                                    
+                                        </v-tab-item>
+                                    </v-tabs>
                                 </v-flex>
                             </v-layout>
                         </v-card-text>
@@ -140,25 +137,6 @@ export default {
         cardHeight(){
             if(this.dimensionObj.origHeight) return this.dimensionObj.origHeight
             return 0;
-        },
-        tabContent(){
-            let returnVal = {};
-
-            switch(this.currentTab){
-                case 0:
-                    if(this.data.hasOwnProperty('related_collections') && this.data.related_collections.results) returnVal = this.data.related_collections.results
-                break;
-
-                case 1:
-                    if(this.data.exif) returnVal = this.data.exif;
-                break;
-
-                case 2:
-                    returnVal = this.picId;
-                break;
-            }
-
-            return returnVal;
         }
     },
     props:{
