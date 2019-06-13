@@ -74,7 +74,7 @@ export default {
   },
   beforeDestroy(){
     // Remove scroll event
-    window.removeEventListener('scroll');
+    window.removeEventListener('scroll', this.scrollFunction);
   }
 }
 </script>
