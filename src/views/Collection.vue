@@ -10,7 +10,7 @@
 
 <script>
 import axios from 'axios';
-import Collection from '../components/Collection';
+import Collection from '@/components/Collection';
 
 export default {
     data(){

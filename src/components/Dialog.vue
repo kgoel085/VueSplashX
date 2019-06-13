@@ -92,10 +92,10 @@
 
 <script>
 import axios from 'axios';
-import PicStat from '../components/PicStats';
-import Collection from '../components/Collection';
-import Tags from '../components/Tag';
-import UserAvatar from '../components/UserAvatar';
+import PicStat from '@/components/PicStats';
+import Collection from '@/components/Collection';
+import Tags from '@/components/Tag';
+import UserAvatar from '@/components/UserAvatar';
 
 export default {
     data(){

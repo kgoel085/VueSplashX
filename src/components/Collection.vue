@@ -37,7 +37,7 @@
 
 <script>
 import axios from 'axios';
-import UserAvatar from '../components/UserAvatar';
+import UserAvatar from '@/components/UserAvatar';
 
 export default {
     data(){

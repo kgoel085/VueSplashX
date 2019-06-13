@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import Loader from '../components/Loader';
+import Loader from '@/components/Loader';
 
 export default {
     data(){

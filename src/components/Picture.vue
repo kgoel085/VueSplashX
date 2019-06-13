@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import Loader from '../components/Loader';
-import UserAvatar from '../components/UserAvatar';
+import Loader from '@/components/Loader';
+import UserAvatar from '@/components/UserAvatar';
 
 export default {
     data(){
