@@ -17,6 +17,7 @@ export default {
     return {
       currentLayout: 0,
       dataObj: [],
+      scrollFunction: null,
       sortArr: ['latest', 'oldest', 'popular'],
       params: {
         page: 1,
@@ -64,9 +65,16 @@ export default {
     if(this.apiKey) this.getData();
 
     // On scroll, call next batch
-    window.onscroll = function(ev) {
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && !vm.tokenExpired) vm.getData();
+    vm.scrollFunction = () => {
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && !vm.tokenExpired) vm.getData();
     };
+
+    // On scroll, call next batch
+    window.addEventListener('scroll', vm.scrollFunction);
+  },
+  beforeDestroy(){
+    // Remove scroll event
+    window.removeEventListener('scroll');
   }
 }
 </script>

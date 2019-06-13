@@ -16,6 +16,7 @@ export default {
     data(){
         return {
             data:[],
+            scrollFunction: null,
             params: {
                 page: 1,
 				per_page: 20,
@@ -38,7 +39,10 @@ export default {
                 // Check for pagination info
                 if(resp.data.success.hasOwnProperty('extra_info')){
                     let pgInfo = resp.data.success.extra_info.pagination;
-                    if(pgInfo.hasOwnProperty('page')) vm.params.page = pgInfo.page;
+                    if(pgInfo.hasOwnProperty('page')){
+                        vm.params.page = pgInfo.page;
+                        vm.per_page = 10
+                    }
                 }
 
                 if(data.length > 0){
@@ -56,10 +60,16 @@ export default {
         let vm = this;
         if(this.apiKey) this.getCollections();
 
-        // On scroll, call next batch
-        window.onscroll = function(ev) {
+        vm.scrollFunction = () => {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && !vm.tokenExpired) vm.getCollections();
         };
+
+        // On scroll, call next batch
+        window.addEventListener('scroll', vm.scrollFunction);
+    },
+    beforeDestroy(){
+        // Remove scroll event
+        window.removeEventListener('scroll', this.scrollFunction);
     }
 }
 </script>
