@@ -16,6 +16,7 @@
             <v-spacer></v-spacer>
 
             <v-toolbar-items class="hidden-sm-and-down">
+                <v-btn flat class="white--text" @click="initLogin()">Login</v-btn>
                 <v-btn flat class="white--text" v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
                     {{ item.title }}
                 </v-btn>
@@ -38,11 +39,11 @@
                 
                 <!-- Nav items -->
                 <v-list-tile v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
-                    <v-list-tile-actions>
+                    <v-list-tile-action>
                         <v-icon left color="white">
                             {{ item.icon }}
                         </v-icon>
-                    </v-list-tile-actions>
+                    </v-list-tile-action>
                     <v-list-tile-content>
                         <v-list-tile-title flat class="white--text">{{ item.title }}</v-list-tile-title>
                     </v-list-tile-content>
@@ -53,6 +54,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data(){
         return {
@@ -78,6 +81,31 @@ export default {
         reqLoader(){
             return this.$store.state.reqLoading;
         },
+    },
+    methods:{
+        initLogin(){
+            axios.get('/initLogin').then(resp => {
+                let data = (resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')) ? resp.data.success : false;
+                if(data){
+                    // Redirect URL
+                    let port = (window.location.port) ? window.location.port : 80;
+                    let loginUrl = window.location.protocol+'//'+window.location.hostname+':'+port+'/login';
+                    data['redirect_uri'] = loginUrl;
+
+                    let params = [];
+                    for(let key of Object.keys(data)){
+                        let str = key+'='+data[key];
+                        params.push(str);
+                    }
+
+                    params = (params.length > 0) ? '?'+params.join('&') : '?';
+
+                    let newWindow = window.open('https://unsplash.com/oauth/authorize'+params, 'vuesplashlog','_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+                }
+            }).catch(err => {
+                this.$store.commit('setApiErr', err.message);
+            });
+        }
     }
 }
 </script>
