@@ -1,5 +1,5 @@
 <template>
-    <nav>
+    <nav v-if="hideNav">
         <v-toolbar app dense fixed flat card class="primary navBar">
             <!-- Sidebar / Navbar toggle -->
             <!-- <v-toolbar-side-icon @click="showNav = !showNav" :disabled="!apiKey"></v-toolbar-side-icon> -->
@@ -77,6 +77,10 @@ export default {
             }
         },
 
+        hideNav(){
+            return this.$store.state.hideNav;
+        },
+
         //Manages request loader
         reqLoader(){
             return this.$store.state.reqLoading;
@@ -98,9 +102,11 @@ export default {
                         params.push(str);
                     }
 
+                    let scopes = ['public','read_user','read_photos','read_collections'].join('+');
+
                     params = (params.length > 0) ? '?'+params.join('&') : '?';
 
-                    let newWindow = window.open('https://unsplash.com/oauth/authorize'+params, 'vuesplashlog','_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+                    let newWindow = window.open('https://unsplash.com/oauth/authorize'+params+'&scope='+scopes, 'vuesplashlog','_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
                 }
             }).catch(err => {
                 this.$store.commit('setApiErr', err.message);

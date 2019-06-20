@@ -24,7 +24,10 @@ export default new Vuex.Store({
     showPic: null,
 
     // If set, then picture details will be used from here, else showPic will be used
-    picObj: null
+    picObj: null,
+
+    // Hide navbar
+    hideNav: true,
   },
   mutations: {
     // Set API token
@@ -66,6 +69,11 @@ export default new Vuex.Store({
     // Store the current picture object
     setPicDetails(state, obj = null){
       state.picObj = obj
+    },
+
+    // hide navbar
+    hideNav(state, val = false){
+      state.hideNav = val;
     }
   },
   actions: {
