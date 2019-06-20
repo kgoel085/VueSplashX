@@ -30,6 +30,11 @@ let router =  new Router({
       component: () => import('./views/Home.vue')
     },
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('./views/Login.vue')
+    },
+    {
       path: '/about',
       name: 'about',
       // route level code-splitting
