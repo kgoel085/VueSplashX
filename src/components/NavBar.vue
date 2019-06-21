@@ -54,8 +54,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
     data(){
         return {
@@ -85,33 +83,6 @@ export default {
         reqLoader(){
             return this.$store.state.reqLoading;
         },
-    },
-    methods:{
-        initLogin(){
-            axios.get('/initLogin').then(resp => {
-                let data = (resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')) ? resp.data.success : false;
-                if(data){
-                    // Redirect URL
-                    let port = (window.location.port) ? window.location.port : 80;
-                    let loginUrl = window.location.protocol+'//'+window.location.hostname+':'+port+'/login';
-                    data['redirect_uri'] = loginUrl;
-
-                    let params = [];
-                    for(let key of Object.keys(data)){
-                        let str = key+'='+data[key];
-                        params.push(str);
-                    }
-
-                    let scopes = ['public','read_user','read_photos','read_collections'].join('+');
-
-                    params = (params.length > 0) ? '?'+params.join('&') : '?';
-
-                    let newWindow = window.open('https://unsplash.com/oauth/authorize'+params+'&scope='+scopes, 'vuesplashlog','_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
-                }
-            }).catch(err => {
-                this.$store.commit('setApiErr', err.message);
-            });
-        }
     }
 }
 </script>
