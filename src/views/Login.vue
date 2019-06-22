@@ -24,10 +24,12 @@ export default {
     methods:{
         // Get user details from auth code
         getCode(){
-            axios.post('/oauth', {code: this.authCode}).then(resp => {
-                
+            axios.post('/oauth', {code: this.authCode},{withCredentials: true}).then(resp => {
+                if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
+                    window.close();
+                }
             }).catch(err => {
-                console.log(err);
+                
             });
         }
     },
@@ -37,7 +39,12 @@ export default {
     },
     mounted(){
        if(this.authCode) this.getCode();
+       else{this.$store.commit('removeToken');this.$router.push({name: 'home', force: true});}
        //if(this.authCode) document.getElementById('test').submit();
+    },
+    beforeDestroy(){
+        // Hide navbar before mounting
+        this.$store.commit('hideNav', true);
     }
 }
 </script>

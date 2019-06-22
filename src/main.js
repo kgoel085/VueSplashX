@@ -114,8 +114,15 @@ Vue.mixin({
   },
   methods:{
 
+    // Refresh Page
+    refreshPage(){
+      // Redirect to login to regenerate the life cycle
+      router.push({name:'login', force: true});
+    },
+
     // Initiaite the login process
     initLogin(){
+      let vm = this;
       axios.get('/initLogin').then(resp => {
         let data = (resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')) ? resp.data.success : false;
         if(data){
@@ -126,7 +133,7 @@ Vue.mixin({
 
           let params = [];
           for(let key of Object.keys(data)){
-              let str = key+'='+data[key];
+              let str = ((key == 'cd') ? 'client_id' : key) +'='+data[key];
               params.push(str);
           }
 
@@ -135,6 +142,9 @@ Vue.mixin({
           params = (params.length > 0) ? '?'+params.join('&') : '?';
 
           let newWindow = window.open('https://unsplash.com/oauth/authorize'+params+'&scope='+scopes, 'vuesplashlog','_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+          newWindow.onbeforeunload = function(){ 
+            vm.refreshPage();
+          };
         }
       }).catch(err => {
         this.$store.commit('setApiErr', err.message);
