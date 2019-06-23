@@ -16,7 +16,7 @@
             <v-spacer></v-spacer>
 
             <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat class="white--text" @click="initLogin()">Login</v-btn>
+                <v-btn flat class="white--text" @click="initLogin()" v-if="!userCred">Login</v-btn>
                 <v-btn flat class="white--text" v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
                     {{ item.title }}
                 </v-btn>
@@ -54,6 +54,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data(){
         return {
@@ -83,6 +85,18 @@ export default {
         reqLoader(){
             return this.$store.state.reqLoading;
         },
+
+        // Get user related details
+        userObj(){
+            let returnObj = {};
+            
+            // if user cred token is available or not
+            if(this.userCred){
+                
+            }
+
+            return returnObj;
+        }
     }
 }
 </script>
