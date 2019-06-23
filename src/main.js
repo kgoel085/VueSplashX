@@ -17,6 +17,8 @@ axios.interceptors.request.use(config => {
   //Attach auth token in the headers
   if (store.state.token) config.headers.Authorization = `Bearer ${store.state.token}`;
 
+  // If session storage is avaialble
+  if(sessionStorage.getItem('usto')) config.headers['X-USRR-CRED'] = sessionStorage.getItem('usto');
   
   return config;
 });
@@ -53,7 +55,11 @@ Vue.filter('countNumber', (value = 0) => {
 
 // Global vue mixin
 Vue.mixin({
-
+  data(){
+    return {
+      userCred: (sessionStorage.getItem('usto')) ? sessionStorage.getItem('usto') : false,
+    }
+  },
   computed:{
 
     // Returns API token 
@@ -110,21 +116,6 @@ Vue.mixin({
 
 
       return returnVal;
-    },
-
-    // Returns user cred token from unsplash
-    userCred(){
-      if(sessionStorage.getItem('usto')){
-        store.commit('setloginCred', sessionStorage.getItem('usto'));
-        return sessionStorage.getItem('usto');
-      }
-      return false;
-    }
-  },
-  watch:{
-    // Refresh page if user cred is present
-    userCred(val){
-      if(val) router.push({name: login, force: true});
     }
   },
   methods:{
