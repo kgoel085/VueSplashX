@@ -19,7 +19,7 @@ export default {
             scrollFunction: null,
             params: {
                 page: 1,
-				per_page: 20,
+				per_page: 10,
 				order_by: 'latest',
                 total_pages: 0,
                 featured: true
