@@ -16,10 +16,28 @@
             <v-spacer></v-spacer>
 
             <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat class="white--text" @click="initLogin()" v-if="!userCred">Login</v-btn>
                 <v-btn flat class="white--text" v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
                     {{ item.title }}
                 </v-btn>
+
+                <template v-if="!$store.state.usrDetails">
+                    <v-btn flat class="white--text" @click="initLogin()" >Login</v-btn>
+                </template>
+                <template v-else>
+                    <v-menu :nudge-width="100">
+                        <template v-slot:activator="{ on }">
+                            <v-btn v-on="on" flat class="white--text" >{{ $store.state.usrDetails.name }} <v-icon dark>arrow_drop_down</v-icon></v-btn>
+                        </template>
+
+                        <v-list>
+                            <v-list-tile>
+                                <v-list-tile-title>View Profile</v-list-tile-title>
+                                <v-list-tile-title>View Collection</v-list-tile-title>
+                                <v-list-tile-title>View Photos</v-list-tile-title>
+                            </v-list-tile>
+                        </v-list>
+                    </v-menu>
+                </template>
             </v-toolbar-items>
         </v-toolbar>
 
@@ -84,18 +102,6 @@ export default {
         //Manages request loader
         reqLoader(){
             return this.$store.state.reqLoading;
-        },
-
-        // Get user related details
-        userObj(){
-            let returnObj = {};
-            
-            // if user cred token is available or not
-            if(this.userCred){
-                
-            }
-
-            return returnObj;
         }
     }
 }
