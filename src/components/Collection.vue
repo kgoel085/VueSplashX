@@ -1,7 +1,7 @@
 <template>
     <v-flex :[blockSize] = true class="collection_mod">
         <v-card flat tile hover ripple class="pa-1 ma-0">
-            <v-carousel hide-delimiters class="collection_carousel">
+            <v-carousel hide-delimiters class="collection_carousel" :cycle="false">
                 <v-card light flat tile class="grow collection_details transparent top">
                     <v-card-title class="pa-1">
                         <v-layout row wrap>
