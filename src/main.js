@@ -16,8 +16,8 @@ axios.interceptors.request.use(config => {
 
   //Attach auth token in the headers
   if (store.state.token) config.headers.Authorization = `Bearer ${store.state.token}`;
-    
 
+  
   return config;
 });
 
@@ -110,16 +110,24 @@ Vue.mixin({
 
 
       return returnVal;
+    },
+
+    // Returns user cred token from unsplash
+    userCred(){
+      if(sessionStorage.getItem('usto')){
+        store.commit('setloginCred', sessionStorage.getItem('usto'));
+        return sessionStorage.getItem('usto');
+      }
+      return false;
+    }
+  },
+  watch:{
+    // Refresh page if user cred is present
+    userCred(val){
+      if(val) router.push({name: login, force: true});
     }
   },
   methods:{
-
-    // Refresh Page
-    refreshPage(){
-      // Redirect to login to regenerate the life cycle
-      router.push({name:'login', force: true});
-    },
-
     // Initiaite the login process
     initLogin(){
       let vm = this;
@@ -143,7 +151,7 @@ Vue.mixin({
 
           let newWindow = window.open('https://unsplash.com/oauth/authorize'+params+'&scope='+scopes, 'vuesplashlog','_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
           newWindow.onbeforeunload = function(){ 
-            vm.refreshPage();
+            if(this.token) sessionStorage.setItem('usto', this.token);
           };
         }
       }).catch(err => {

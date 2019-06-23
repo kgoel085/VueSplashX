@@ -28,6 +28,9 @@ export default new Vuex.Store({
 
     // Hide navbar
     hideNav: true,
+
+    // Stores the login user credentials
+    loginCred: (sessionStorage.getItem('usto')) ? sessionStorage.getItem('usto') : false
   },
   mutations: {
     // Set API token
@@ -74,6 +77,11 @@ export default new Vuex.Store({
     // hide navbar
     hideNav(state, val = false){
       state.hideNav = val;
+    },
+
+    //Set login cred from the SERVER
+    setloginCred(state, val = false){
+      state.loginCred = val;
     }
   },
   actions: {
