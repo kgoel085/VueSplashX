@@ -2,7 +2,7 @@
     <nav v-if="hideNav">
         <v-toolbar app dense fixed flat card class="primary navBar">
             <!-- Sidebar / Navbar toggle -->
-            <!-- <v-toolbar-side-icon @click="showNav = !showNav" :disabled="!apiKey"></v-toolbar-side-icon> -->
+            <v-toolbar-side-icon @click="showNav = !showNav" :disabled="!apiKey || !$store.state.usrDetails"></v-toolbar-side-icon>
 
             <!-- Title -->
             <v-toolbar-title class="headline text-uppercase">
@@ -32,7 +32,11 @@
                         <v-list>
                             <v-list-tile>
                                 <v-list-tile-title>View Profile</v-list-tile-title>
-                                <v-list-tile-title>View Collection</v-list-tile-title>
+                            </v-list-tile>
+                            <v-list-tile>
+                                <v-list-tile-title>View Collections</v-list-tile-title>
+                            </v-list-tile>
+                            <v-list-tile>
                                 <v-list-tile-title>View Photos</v-list-tile-title>
                             </v-list-tile>
                         </v-list>
