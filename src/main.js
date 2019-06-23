@@ -57,7 +57,7 @@ Vue.filter('countNumber', (value = 0) => {
 Vue.mixin({
   data(){
     return {
-      userCred: (sessionStorage.getItem('usto')) ? sessionStorage.getItem('usto') : false,
+      
     }
   },
   computed:{
@@ -116,6 +116,16 @@ Vue.mixin({
 
 
       return returnVal;
+    },
+    // Get the session val for usrCred 
+    userCred(){
+      let val = (sessionStorage.getItem('usto')) ? sessionStorage.getItem('usto') : false;
+      if(val){
+        //Set in store for global access
+        store.dispatch('getUserDetails', {value: val, key: this.apiKey});
+        return val;
+      }
+      return false;
     }
   },
   methods:{

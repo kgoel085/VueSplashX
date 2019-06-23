@@ -1,7 +1,29 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios';
 
 Vue.use(Vuex)
+
+// Constant function to load usrCred
+const usrCredDt = async (val, commit) => {
+  let headersObj = {'X-USRR-CRED': val['value'], 'Authorization': `Bearer ${val['key']}`};
+  await axios.get(
+    '/users/init/action/me', 
+    {},{headers: headersObj}
+  ).then(resp => {
+    if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
+      // Set the received object in store
+      commit('setloginCred', val['value']);
+      commit('setUsrDetails', resp.data.success.data);
+    }
+  }).catch(err => {
+    commit('apiErr', 'Invalid login. Please try again');
+    commit('setloginCred', false);
+    commit('setUsrDetails', false);
+
+    sessionStorage.removeItem('usto');
+  });
+}
 
 export default new Vuex.Store({
   state: {
@@ -30,7 +52,9 @@ export default new Vuex.Store({
     hideNav: true,
 
     // Stores the login user credentials
-    loginCred: (sessionStorage.getItem('usto')) ? sessionStorage.getItem('usto') : false
+    loginCred: false,
+
+    usrDetails: false
   },
   mutations: {
     // Set API token
@@ -82,9 +106,18 @@ export default new Vuex.Store({
     //Set login cred from the SERVER
     setloginCred(state, val = false){
       state.loginCred = val;
+    },
+
+    // Store current usr details
+    setUsrDetails(state, val = false){
+      state.usrDetails = val;
     }
   },
   actions: {
-
+    // Set auth user details
+    getUserDetails({commit}, val){
+      // Get usrCreds
+      usrCredDt(val, commit);
+    }
   }
 })

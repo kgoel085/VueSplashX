@@ -3,7 +3,7 @@
     <!-- Main content container -->
     <v-content>
       <!-- Header & Navbar  -->
-      <NavBar/>
+      <NavBar :key="userCred" />
 
       <!-- Router views -->
       <v-slide-x-transition>
