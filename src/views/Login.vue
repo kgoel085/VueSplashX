@@ -24,9 +24,14 @@ export default {
     methods:{
         // Get user details from auth code
         getCode(){
-            axios.post('/oauth', {code: this.authCode},{withCredentials: true}).then(resp => {
+            axios.post('/oauth', {code: this.authCode}).then(resp => {
                 if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
-                    window.close();
+                    let dataObj = resp.data.success.data;
+                    if(dataObj){
+                        window.token = dataObj;
+                        //sessionStorage.setItem('ustoLog', dataObj);
+                        window.close();
+                    }
                 }
             }).catch(err => {
                 
