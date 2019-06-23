@@ -29,7 +29,6 @@ export default {
                     let dataObj = resp.data.success.data;
                     if(dataObj){
                         window.token = dataObj;
-                        //sessionStorage.setItem('ustoLog', dataObj);
                         window.close();
                     }
                 }

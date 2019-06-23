@@ -18,7 +18,7 @@ axios.interceptors.request.use(config => {
   if (store.state.token) config.headers.Authorization = `Bearer ${store.state.token}`;
 
   // If session storage is avaialble
-  if(sessionStorage.getItem('usto')) config.headers['X-USRR-CRED'] = sessionStorage.getItem('usto');
+  if(localStorage.getItem('usto')) config.headers['X-USRR-CRED'] = localStorage.getItem('usto');
   
   return config;
 });
@@ -58,6 +58,11 @@ Vue.mixin({
   data(){
     return {
       
+    }
+  },
+  watch:{
+    userCred(val){
+      //return val;
     }
   },
   computed:{
@@ -119,7 +124,8 @@ Vue.mixin({
     },
     // Get the session val for usrCred 
     userCred(){
-      let val = (sessionStorage.getItem('usto')) ? sessionStorage.getItem('usto') : false;
+      let val = (localStorage.getItem('usto')) ? localStorage.getItem('usto') : false;
+      console.log(val);
       if(val){
         //Set in store for global access
         store.dispatch('getUserDetails', {value: val, key: this.apiKey});
@@ -152,7 +158,9 @@ Vue.mixin({
 
           let newWindow = window.open('https://unsplash.com/oauth/authorize'+params+'&scope='+scopes, 'vuesplashlog','_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
           newWindow.onbeforeunload = function(){ 
-            if(this.token) sessionStorage.setItem('usto', this.token);
+            if(this.token){
+              localStorage.setItem('usto', this.token);
+            }
           };
         }
       }).catch(err => {

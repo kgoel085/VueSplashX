@@ -17,11 +17,11 @@ const usrCredDt = async (val, commit) => {
       commit('setUsrDetails', resp.data.success.data);
     }
   }).catch(err => {
-    commit('apiErr', 'Invalid login. Please try again');
+    commit('setApiErr', 'Invalid login. Please try again');
     commit('setloginCred', false);
     commit('setUsrDetails', false);
 
-    sessionStorage.removeItem('usto');
+    localStorage.removeItem('usto');
   });
 }
 
