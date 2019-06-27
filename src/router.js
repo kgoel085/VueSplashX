@@ -5,12 +5,23 @@ import Axios from 'axios'
 
 Vue.use(Router);
 
+// Get cookie based from name
+const getCookie = (name = false) => {
+  let returnVal = false;
+  var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  if (match && match.hasOwnProperty(2)) returnVal = match[2];
+  
+  return returnVal;
+};
+
 // Generates a new API token 
 const generateToken = async (nxtFunc) => {
   let loginDt = {email: process.env.VUE_APP_EMAIL, password: process.env.VUE_APP_PASSWORD, account: process.env.VUE_APP_ACCOUNT};
   await Axios.post('/generateToken', loginDt).then(resp => {
-    if(resp.data.success.token){
-      store.commit('setToken', resp.data.success.token);
+    if(resp.data.success){
+      let tokenVal = getCookie('pyld');
+      if(tokenVal) store.commit('setToken', tokenVal);
+      
       nxtFunc();
     }
   }).catch(error => {
@@ -58,6 +69,12 @@ let router =  new Router({
 router.beforeEach((to, from, nxt) => {
   // Checks whether API token is valid or not before going to a route
   let usrToken = store.state.token;
+  let cook = getCookie('pyld');
+
+  if(cook && !usrToken){
+    store.commit('setToken', cook);
+    usrToken = cook;
+  } 
 
   if(!usrToken){
 
@@ -67,22 +84,22 @@ router.beforeEach((to, from, nxt) => {
 
   }else{
     //Extract token vars
-    let tmpVars = JSON.parse(atob(usrToken.split('.')[1]));
-    if(tmpVars){
+    //let tmpVars = JSON.parse(atob(usrToken.split('.')[1]));
+    // if(tmpVars){
 
-      //Check the expiry time
-      let currentTime = (new Date(new Date(Date.now() + (5 * 60 * 1000))).getTime() / 1000).toFixed(0);
+    //   //Check the expiry time
+    //   let currentTime = (new Date(new Date(Date.now() + (5 * 60 * 1000))).getTime() / 1000).toFixed(0);
   
-      // If expired
-      if(currentTime > tmpVars.exp){
+    //   // If expired
+    //   if(currentTime > tmpVars.exp){
 
-        //Remove current & generate new one
-        store.commit('removeToken');
-        generateToken(nxt);
+    //     //Remove current & generate new one
+    //     store.commit('removeToken');
+    //     generateToken(nxt);
 
-        return false;
-      }
-    }
+    //     return false;
+    //   }
+    // }
   }
 
   // Reset API error msg before hitting API request
