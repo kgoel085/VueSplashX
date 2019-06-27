@@ -8,6 +8,7 @@ import axios from 'axios'
 //Axios default configurations
 axios.defaults.baseURL = process.env.VUE_APP_API_URL;
 axios.defaults.headers.common['Accepts'] = 'application/json';
+axios.defaults.withCredentials = true;
 
 //Axios Interceptors
 axios.interceptors.request.use(config => {
@@ -17,7 +18,7 @@ axios.interceptors.request.use(config => {
   //Attach auth token in the headers
   if (store.state.token) config.headers.Authorization = `Bearer ${store.state.token}`;
 
-  // If session storage is avaialble
+  // If session storage is available
   if(localStorage.getItem('usto')) config.headers['X-USRR-CRED'] = localStorage.getItem('usto');
   
   return config;
