@@ -16,7 +16,7 @@ axios.interceptors.request.use(config => {
   store.commit('setReqLoader', true);
 
   //Attach auth token in the headers
-  if (store.state.token) config.headers.Authorization = `Bearer ${store.state.token}`;
+  //if (store.state.token) config.headers.Authorization = `Bearer ${store.state.token}`;
 
   // If session storage is available
   if(localStorage.getItem('usto')) config.headers['X-USRR-CRED'] = localStorage.getItem('usto');
@@ -126,7 +126,6 @@ Vue.mixin({
     // Get the session val for usrCred 
     userCred(){
       let val = (localStorage.getItem('usto')) ? localStorage.getItem('usto') : false;
-      console.log(val);
       if(val){
         //Set in store for global access
         store.dispatch('getUserDetails', {value: val, key: this.apiKey});
