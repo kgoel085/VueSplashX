@@ -19,7 +19,7 @@ const generateToken = async (nxtFunc) => {
   let loginDt = {email: process.env.VUE_APP_EMAIL, password: process.env.VUE_APP_PASSWORD, account: process.env.VUE_APP_ACCOUNT};
   await Axios.post('/generateToken', loginDt).then(resp => {
     if(resp.data.success){
-      let tokenVal = getCookie('pyld');
+      let tokenVal = getCookie(process.env.VUE_APP_TOKEN_KEY);
       if(tokenVal) store.commit('setToken', tokenVal);
       
       nxtFunc();
@@ -69,7 +69,7 @@ let router =  new Router({
 router.beforeEach((to, from, nxt) => {
   // Checks whether API token is valid or not before going to a route
   let usrToken = store.state.token;
-  let cook = getCookie('pyld');
+  let cook = getCookie(process.env.VUE_APP_TOKEN_KEY);
 
   if(cook && !usrToken){
     store.commit('setToken', cook);
