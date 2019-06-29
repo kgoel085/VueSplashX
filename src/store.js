@@ -1,27 +1,24 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import axios from 'axios';
+import helper from './helper';
 
 Vue.use(Vuex)
 
 // Constant function to load usrCred
-const usrCredDt = async (val, commit) => {
-  let headersObj = {'X-USRR-CRED': val['value'], 'Authorization': `Bearer ${val['key']}`};
-  await axios.get(
-    '/users/init/action/me', 
-    {},{headers: headersObj}
-  ).then(resp => {
+const usrCredDt = async (commit) => {
+  if(!helper.getCookie(process.env.VUE_APP_LOGIN_KEY)){
+    commit('setUsrDetails', false);
+    return false;
+  }
+  await axios.get('/users/init/action/me').then(resp => {
     if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
       // Set the received object in store
-      commit('setloginCred', val['value']);
       commit('setUsrDetails', resp.data.success.data);
     }
   }).catch(err => {
     commit('setApiErr', 'Invalid login. Please try again');
-    commit('setloginCred', false);
     commit('setUsrDetails', false);
-
-    localStorage.removeItem('usto');
   });
 }
 
@@ -51,9 +48,7 @@ export default new Vuex.Store({
     // Hide navbar
     hideNav: true,
 
-    // Stores the login user credentials
-    loginCred: false,
-
+    // User login token
     usrDetails: false
   },
   mutations: {
@@ -101,21 +96,14 @@ export default new Vuex.Store({
       state.hideNav = val;
     },
 
-    //Set login cred from the SERVER
-    setloginCred(state, val = false){
-      state.loginCred = val;
-    },
-
-    // Store current usr details
+    // Set user token
     setUsrDetails(state, val = false){
       state.usrDetails = val;
     }
   },
   actions: {
-    // Set auth user details
-    getUserDetails({commit}, val){
-      // Get usrCreds
-      usrCredDt(val, commit);
+    getUsrDetails({commit}){
+      usrCredDt(commit);
     }
   }
 })
