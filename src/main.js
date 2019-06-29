@@ -71,6 +71,15 @@ Vue.mixin({
       return false;
     },
 
+    //Login token
+    usrToken(){
+      if(helper.getCookie(process.env.VUE_APP_LOGIN_KEY)){
+        if(!store.state.usrDetails) store.dispatch('getUsrDetails');
+        return helper.getCookie(process.env.VUE_APP_LOGIN_KEY);
+      }
+      return false;
+    },
+
     // Global obj to configure image related properties
     dimensionObj(){
       let mainObj = this.$vuetify.breakpoint;
