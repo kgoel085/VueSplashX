@@ -26,11 +26,8 @@ export default {
         getCode(){
             axios.post('/oauth', {code: this.authCode}).then(resp => {
                 if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
-                    let dataObj = resp.data.success.data;
-                    if(dataObj){
-                        window.token = dataObj;
-                        window.close();
-                    }
+                    let dataObj = resp.data.success;
+                    if(dataObj) window.close();
                 }
             }).catch(err => {
                 
