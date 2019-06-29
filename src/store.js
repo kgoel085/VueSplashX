@@ -58,11 +58,9 @@ export default new Vuex.Store({
   },
   mutations: {
     // Set API token
-    setToken(state, tkn){
-      if(tkn){
-        state.token = tkn;
-        state.tokenErr = null;
-      }
+    setToken(state, tkn = null){
+      if(tkn) state.tokenErr = null;
+      state.token = tkn;
     },
 
     // Removes the current API token value and set error msg, if received

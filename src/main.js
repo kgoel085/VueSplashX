@@ -4,6 +4,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from 'axios'
+import helper from './helper';
 
 //Axios default configurations
 axios.defaults.baseURL = process.env.VUE_APP_API_URL;
@@ -17,6 +18,7 @@ axios.interceptors.request.use(config => {
 
   //Attach auth token in the headers
   //if (store.state.token) config.headers.Authorization = `Bearer ${store.state.token}`;
+  if(helper.checkCookie() === false && config.url.indexOf('Token') < 0) helper.generateToken();
 
   // If session storage is available
   if(localStorage.getItem('usto')) config.headers['X-USRR-CRED'] = localStorage.getItem('usto');
