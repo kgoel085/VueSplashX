@@ -31,20 +31,19 @@ let helper = {
     },
 
     // Checks whether cookie is available or not
-    checkCookie: function(call = false){
+    checkCookie: function(){
         // Check for token
-        let cName = (call === false) ? process.env.VUE_APP_TOKEN_KEY : process.env.VUE_APP_LOGIN_KEY;
-        let setC = (call === false) ? 'setToken' : 'setLogin';
-
         let usrToken = (store.state.token) ? store.state.token : false;
-        let cook = this.getCookie(cName);
+        let cook = this.getCookie(process.env.VUE_APP_TOKEN_KEY);
 
         if(cook && !usrToken){
-            store.commit(setC, cook);
+            store.commit('setToken', cook);
             return true;
         }
 
-        store.commit(setC, null);
+        if(store.state.token) return true;
+
+        store.commit('setToken', null);
         return false;
     },
 
