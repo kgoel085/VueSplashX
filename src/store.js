@@ -30,9 +30,6 @@ export default new Vuex.Store({
     // Stores the error messages
     tokenErr: null,
 
-    // Show hide side bar
-    showSideBar: false,
-
     // Shows loader in between request cycles
     reqLoading: false,
 
@@ -63,11 +60,6 @@ export default new Vuex.Store({
       state.token = null;
 
       if(msg) state.tokenErr = msg;
-    },
-
-    // Show / Hide sidebar
-    setSideBar(state, sideBar = false){
-      state.showSideBar = sideBar;
     },
 
     // Show hide API request laoder
