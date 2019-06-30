@@ -36,6 +36,9 @@
                             <v-list-tile>
                                 <v-list-tile-title>View Photos</v-list-tile-title>
                             </v-list-tile>
+                            <v-list-tile>
+                                <v-list-tile-title @click="$store.dispatch('logoutUsr')">Logout</v-list-tile-title>
+                            </v-list-tile>
                         </v-list>
                     </v-menu>
                 </template>

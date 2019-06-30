@@ -20,7 +20,16 @@ const usrCredDt = async (commit) => {
     commit('setApiErr', 'Invalid login. Please try again');
     commit('setUsrDetails', false);
   });
-}
+};
+
+const logoutUsr = async function(commit){
+  await axios.get('/logout/user').then(resp => {
+    commit('setUsrDetails', false);
+  }).catch(err => {
+    commit('setApiErr', 'Invalid login. Please try again');
+    commit('setUsrDetails', false);
+  });
+};
 
 export default new Vuex.Store({
   state: {
@@ -94,8 +103,14 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    // Get details for logged in user
     getUsrDetails({commit}){
       usrCredDt(commit);
-    }
+    },
+
+    // Remove logged in user
+    logoutUsr({commit}){
+      logoutUsr(commit);
+    } 
   }
 })
