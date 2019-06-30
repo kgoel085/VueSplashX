@@ -9,10 +9,29 @@
 
             <!-- Request Loader -->
             <v-btn color="secondary" flat :loading="true" v-if="reqLoader" />
+            
+            <!-- Search Bar -->
+            <v-slide-x-transition>
+                <v-text-field
+                    placeholder="Search"
+                    v-if="showSearch"
+                    color="white"
+                    clearable
+                    flat
+                    light
+                    class="px-4"
+                    v-model="searchText"
+                    @keyup.enter="doSearch()"
+                ></v-text-field>
+            </v-slide-x-transition>
 
             <v-spacer></v-spacer>
 
             <v-toolbar-items class="hidden-sm-and-down">
+                <v-btn flat icon class="white--text" @click="showSearch = !showSearch">
+                    <v-icon>search</v-icon>
+                </v-btn>
+
                 <v-btn flat class="white--text" v-for="item in listItems" :key="item.title" router :to="item.path" :disabled="!apiKey">
                     {{ item.title }}
                 </v-btn>
@@ -53,6 +72,9 @@ import axios from 'axios';
 export default {
     data(){
         return {
+            showSearch: false,
+            searchText: null,
+
             // List of items to show in navbar
             listItems:[
                 {icon: 'dashboard', title: 'Home', path: '/'},
@@ -69,6 +91,16 @@ export default {
         reqLoader(){
             return this.$store.state.reqLoading;
         }
+    },
+    methods:{
+        doSearch(){
+            this.$router.push({
+                name: 'search',
+                params: {
+                    't': this.searchText
+                }
+            });
+        }
     }
 }
 </script>
@@ -76,5 +108,9 @@ export default {
 <style>
     .navBar{
         z-index: 99
+    }
+
+    .navBar .v-input input{
+        color:#fff !important;
     }
 </style>
