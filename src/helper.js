@@ -68,6 +68,10 @@ let helper = {
             params = (params.length > 0) ? '?'+params.join('&') : '?';
   
             let newWindow = window.open('https://unsplash.com/oauth/authorize'+params+'&scope='+scopes, 'vuesplashlog','_blank', 'location=yes,height=570,width=520,scrollbars=yes,status=yes');
+            newWindow.onbeforeunload = function(){
+                // Generate user details 
+                store.dispatch('getUsrDetails');
+            }
           }
         }).catch(err => {
           store.commit('setApiErr', err.message);
