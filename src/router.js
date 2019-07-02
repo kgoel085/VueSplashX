@@ -38,7 +38,7 @@ let router =  new Router({
       component: () => import('./views/SingleCollection.vue')
     },
     {
-      path: '/search/:t',
+      path: '/search/:t?',
       name: 'search',
       component: () => import('./views/Search.vue')
     }
