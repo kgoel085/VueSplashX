@@ -96,7 +96,7 @@ export default {
         doSearch(){
             this.$router.push({
                 name: 'search',
-                params: {
+                query: {
                     't': this.searchText
                 }
             });
