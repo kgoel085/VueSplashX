@@ -2,7 +2,7 @@
   <div class="home">
     <v-container fluid class="pa-1" :disabled="!apiKey">
       <v-layout :[layout]=true wrap v-if="dataObj.length > 0">
-          <Picture v-for="(data, indx) in dataObj" :key="indx" :details=data></Picture>
+          <Picture v-for="(data, indx) in dataObj" :key="indx" :obj="data"></Picture>
       </v-layout>
     </v-container>
   </div>

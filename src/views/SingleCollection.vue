@@ -25,7 +25,7 @@
 
                 <v-flex xs12 v-if="picData.length > 0">
                     <v-layout row wrap>
-                        <Picture v-for="(colData,indx) in picData" :details="colData" :key="indx"></Picture>
+                        <Picture v-for="(colData,indx) in picData" :obj="colData" :key="indx"></Picture>
                     </v-layout>
                 </v-flex>
                 
@@ -104,7 +104,7 @@ export default {
             });
         },
 
-        // Get colelction related photos
+        // Get collection related photos
         getCollectionPhotos(){
             if(!this.queryId) return false;
 

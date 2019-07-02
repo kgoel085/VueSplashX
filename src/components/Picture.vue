@@ -28,7 +28,7 @@ export default {
     },
     computed:{
         data(){
-            return this.details;
+            return this.obj;
         },
         blockSize(){
             return this.dimensionObj.breakpoint+this.dimensionObj.size;
@@ -52,7 +52,7 @@ export default {
         }
     },
     props:{
-        details:{
+        obj:{
             default: {},
             type: Object
         }
