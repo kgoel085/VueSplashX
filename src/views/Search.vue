@@ -4,7 +4,7 @@
             <v-tabs centered icons-and-text color="primary" v-model="currentTab" mandatory fixed>
                 <v-tabs-slider color="white"></v-tabs-slider>
 
-                <v-tab v-for="(tab, indx) in dataObj" :key="indx" :href="'#tab-'+indx" class="white--text">
+                <v-tab v-for="(tab, indx) in dataObj" :key="indx" :href="'#tab-'+indx" class="white--text" :disabled="tab.data.length == 0">
                     {{ tab.title }}
                     <v-icon>{{ tab.icon }}</v-icon>
                 </v-tab>
@@ -32,7 +32,7 @@ import axios from 'axios';
 import Loader from'@/components/Loader';
 import Picture from '@/components/Picture';
 import Collection from '@/components/Collection';
-// import User from '@/components/User';
+import User from '@/components/UserAvatar';
 
 export default {
     data(){
@@ -40,7 +40,7 @@ export default {
             dataObj: {
                 photos: {data: [], params: {}, icon: 'insert_photo', title: 'Photos', component: 'Picture'}, 
                 collections: {data: [], params: {}, icon: 'collections', title: 'Collections', component: 'Collection'},
-                users: {data: [], params: {}, icon: 'people', title: 'Users'}, 
+                users: {data: [], params: {}, icon: 'people', title: 'Users', component: 'User'}, 
             },
             currentTab: null
         }
@@ -48,15 +48,16 @@ export default {
     components:{
         Loader,
         Picture,
-        Collection
+        Collection,
+        User
     },
     methods:{
         // Fetches all the data
         getData(){
             // Get all the data for the searched query
-            let photos = function(){return axios.get(`/search/photos/${this.searchQry}`)}.bind(this);
-            let collections = function(){return axios.get(`/search/collections/${this.searchQry}`)}.bind(this);
-            let users = function(){return axios.get(`/search/users/${this.searchQry}`)}.bind(this);
+            let photos = async function(){return await axios.get(`/search/photos/${this.searchQry}`)}.bind(this);
+            let collections = async function(){return await axios.get(`/search/collections/${this.searchQry}`)}.bind(this);
+            let users = async function(){return await axios.get(`/search/users/${this.searchQry}`)}.bind(this);
 
             axios.all([photos(), collections(), users()]).then(axios.spread(function(photos, collections, users){
                 // Photos data
