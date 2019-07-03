@@ -6,7 +6,7 @@
                     <v-card-title class="pa-1">
                         <v-layout row wrap>
                             <v-flex xs12>
-                                <UserAvatar :obj="data"></UserAvatar>
+                                <UserAvatar :obj="data.user"></UserAvatar>
                             </v-flex>
                         </v-layout>
                     </v-card-title>

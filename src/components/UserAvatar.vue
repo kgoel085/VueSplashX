@@ -39,7 +39,7 @@ import Loader from '@/components/Loader';
 export default {
     data(){
         return{
-            data: (Object.keys(this.obj).length > 0 && this.obj.hasOwnProperty('user')) ? this.obj.user : null,
+            data: (Object.keys(this.obj).length > 0) ? this.obj : null,
             userChipSize: (this.avatarSize) ? this.avatarSize : 50,
             userIntervalObj: null,
             userHideInterval:3000,

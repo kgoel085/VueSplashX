@@ -17,7 +17,7 @@
                     <!-- Actual content -->
                     <v-card flat v-else>
                         <v-card-title class="primary secondary--text pa-0 ma-0 px-1">
-                            <UserAvatar :obj="data" :showDescription="true"></UserAvatar>
+                            <UserAvatar :obj="data.user" :showDescription="true"></UserAvatar>
 
                             <v-btn right flat @click="hideDialogBox()" class="px-3 mr-0 white--text" absolute icon>
                                 <v-icon>close</v-icon>
