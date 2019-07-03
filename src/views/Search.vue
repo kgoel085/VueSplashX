@@ -11,9 +11,35 @@
 
                 <v-tab-item v-for="(tab, indx) in dataObj" :key="indx" :value="'tab-'+indx" lazy>
                     <Loader v-if="!tab.hasOwnProperty('component') && tab.data.length == 0"></Loader>
-                    <v-layout row wrap v-else>
-                        <component v-for="(data, indx) in tab.data" :key="indx" :is="tab.component" :obj="data"></component>
+                    <v-layout row wrap v-else :id="'tab-'+indx">
+                        <template v-if="indx !== dataObj.length - 1">
+                            <component v-for="(data, indx) in tab.data" :key="indx" :is="tab.component" :obj="data"></component>
+                        </template>
+                        <template v-else>
+                            <v-flex xs12 class="pa-1 ma-1">
+                                <v-text-field
+                                    placeholder="Filter User"
+                                    color="white"
+                                    clearable
+                                    flat
+                                    light
+                                    class="px-4"
+                                    v-model="searchText"
+                                    @keyup="doSearch()"
+                                ></v-text-field>
+                            </v-flex>
+                            <v-flex v-for="(data, indx) in tab.data" :key="indx" class="py-1 mt-1">
+                                <v-card flat :height="100">
+                                   <User :obj="data" :userShow="true"></User>
+                                </v-card>
+                            </v-flex>
+                        </template>
                     </v-layout>
+                    <div class="text-xs-center">
+                        <v-slide-y-transition>
+                            <v-btn flat fixed bottom class="primary small elevation-6" v-if="showLoadMore && tab.data.length > 0" @click="getData([tab], indx)">Load More</v-btn>
+                        </v-slide-y-transition>
+                    </div>
                 </v-tab-item>
             </v-tabs>
         </v-flex>
@@ -37,12 +63,15 @@ import User from '@/components/UserAvatar';
 export default {
     data(){
         return {
-            dataObj: {
-                photos: {data: [], params: {}, icon: 'insert_photo', title: 'Photos', component: 'Picture'}, 
-                collections: {data: [], params: {}, icon: 'collections', title: 'Collections', component: 'Collection'},
-                users: {data: [], params: {}, icon: 'people', title: 'Users', component: 'User'}, 
-            },
-            currentTab: null
+            dataObj: [
+                {data: [], params: {page: 1, per_page: 20, total_pages: 0}, icon: 'insert_photo', title: 'Photos', component: 'Picture'}, 
+                {data: [], params: {page: 1, per_page: 10, total_pages: 0}, icon: 'collections', title: 'Collections', component: 'Collection'},
+                {data: [], params: {page: 1, per_page: 50, total_pages: 0}, icon: 'people', title: 'Users', component: 'User'}, 
+            ],
+            currentTab: null,
+            scrollEvent: false,
+            showLoadMore: false,
+            searchText: null
         }
     },
     components:{
@@ -53,30 +82,79 @@ export default {
     },
     methods:{
         // Fetches all the data
-        getData(){
+        getData(callObj = false, calledType = false){
+            let obj = this.dataObj;
+            if(callObj && typeof callObj == 'object') obj = callObj;
+
             // Get all the data for the searched query
-            let photos = async function(){return await axios.get(`/search/photos/${this.searchQry}`)}.bind(this);
-            let collections = async function(){return await axios.get(`/search/collections/${this.searchQry}`)}.bind(this);
-            let users = async function(){return await axios.get(`/search/users/${this.searchQry}`)}.bind(this);
+            obj.forEach((reqObj, type) => {
+                if(calledType || calledType === 0) type = calledType;
+                let a = async function(){return await axios.get(`/search/${reqObj.title.toLowerCase()}/${this.searchQry}`, {params: reqObj.params})}.bind(this);
+                a().then(resp => {
 
-            axios.all([photos(), collections(), users()]).then(axios.spread(function(photos, collections, users){
-                // Photos data
-                if(photos.hasOwnProperty('data') && photos.data.hasOwnProperty('success')) this.fetchData('photos', photos.data.success.data.results);
-
-                // Collections data
-                if(photos.hasOwnProperty('data') && photos.data.hasOwnProperty('success')) this.fetchData('collections', collections.data.success.data.results);
-
-                // Users data
-                if(photos.hasOwnProperty('data') && photos.data.hasOwnProperty('success')) this.fetchData('users', users.data.success.data.results);
-
-            }.bind(this)));
+                    // Set dat in their relative objects
+                    if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
+                        // Hide load more button
+                        if(this.showLoadMore) this.showLoadMore = false;
+                        // Set Data
+                        this.fetchData(type, resp.data.success.data.results);
+                        
+                        // Set pagination
+                        if(resp.data.success.hasOwnProperty('extra_info')) this.setPagination(type, resp.data.success.extra_info.pagination); 
+                    }
+                }).catch(err => {
+                    this.$store.commit('setApiErr', err.message);
+                });
+            });
         },
 
         // Add data to the called sections
         fetchData(section = false, data = false){
-            if(!section || !data) return false;
+            if(!data) return false;
 
-            if(this.dataObj[section]) data.forEach(row => this.dataObj[section]['data'].push(row));
+            if(this.dataObj[section]){
+                let obj = this.dataObj[section];
+                data.forEach(row => obj['data'].push(row));
+            }
+        },
+         
+        // Sets the paginations params
+        setPagination(type, data = false){
+            if(data && this.dataObj.hasOwnProperty(type)){
+                const obj = this.dataObj[type]['params'];
+                Object.keys(obj).forEach(key => {
+                    if(data.hasOwnProperty(key)) obj[key] = data[key];
+                });    
+            }
+        },
+
+        // Currently filter users
+        doSearch(){
+            let searchVal = (this.searchText) ? this.searchText.toLowerCase() : false;
+            let parent = document.querySelector('#'+this.currentTab);
+            let child = parent.querySelectorAll('.v-list__tile[data-user]');
+
+            if(child) child = Array.from(child);
+
+            if(child.length > 0){
+                
+                child.forEach(elem => {
+                    let name = elem.getAttribute('data-user');
+                    let parentNode = elem.parentElement.parentElement.parentElement;
+                    if(name.indexOf(searchVal) > -1){
+                        parentNode.style.display = "";
+                    }else{
+                        if(searchVal) parentNode.style.display = "none";
+                        else parentNode.style.display = "";
+                    }
+                })
+            }
+            
+        }
+    },
+    watch:{
+        searchQry(val){
+            if(val) this.getData();
         }
     },
     computed:{
@@ -87,6 +165,19 @@ export default {
     },
     mounted(){
         if(this.apiKey) this.getData();
+
+        // On scroll, call next batch
+        this.scrollFunction = () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) this.showLoadMore = true;
+            else this.showLoadMore = false;
+        };
+
+        // On scroll, call next batch
+        window.addEventListener('scroll', this.scrollFunction);
+    },
+    beforeDestroy(){
+        // Remove scroll event
+        window.removeEventListener('scroll', this.scrollFunction);
     }
 }
 </script>
