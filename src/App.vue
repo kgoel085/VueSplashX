@@ -12,7 +12,7 @@
       
 
       <!-- Live Stat Block -->
-      <LiveStat class="hidden-sm-and-down" />
+      <!-- <LiveStat class="hidden-sm-and-down" /> -->
 
     </v-content>
 
