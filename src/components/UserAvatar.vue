@@ -1,9 +1,9 @@
 <template>
-    <v-list-tile left class="grow usrAvataR">
+    <v-list-tile left class="usrAvataR" :data-user="data.name.toLowerCase()">
         <template v-if="data">
             <!-- Show user with name -->
             <v-list-tile-avatar text-color="white" @click.stop="showUser = !showUser" :size="userChipSize">
-                <img :src="userImg" :alt="data.name">
+                <img :src="userImg" :alt="data.name" class="elevation-8">
             </v-list-tile-avatar>
 
             <v-list-tile-content>
