@@ -12,7 +12,7 @@
                 <v-tab-item v-for="(tab, indx) in dataObj" :key="indx" :value="'tab-'+indx" lazy>
                     <Loader v-if="!tab.hasOwnProperty('component') && tab.data.length == 0"></Loader>
                     <v-layout row wrap v-else :id="'tab-'+indx">
-                        <template v-if="indx !== dataObj.length - 1">
+                        <template v-if="indx !== 'users'">
                             <component v-for="(data, indx) in tab.data" :key="indx" :is="tab.component" :obj="data"></component>
                         </template>
                         <template v-else>
@@ -37,7 +37,7 @@
                     </v-layout>
                     <div class="text-xs-center">
                         <v-slide-y-transition>
-                            <v-btn flat fixed bottom class="primary small elevation-6" v-if="showLoadMore && tab.data.length > 0" @click="getData([tab], indx)">Load More</v-btn>
+                            <v-btn flat fixed bottom class="primary small elevation-6" v-if="showLoadMore && tab.data.length > 0 && (tab.params.page <= tab.params.total_pages)" @click="fetchData(indx)">Load More</v-btn>
                         </v-slide-y-transition>
                     </div>
                 </v-tab-item>
@@ -63,11 +63,11 @@ import User from '@/components/UserAvatar';
 export default {
     data(){
         return {
-            dataObj: [
-                {data: [], params: {page: 1, per_page: 20, total_pages: 0}, icon: 'insert_photo', title: 'Photos', component: 'Picture'}, 
-                {data: [], params: {page: 1, per_page: 10, total_pages: 0}, icon: 'collections', title: 'Collections', component: 'Collection'},
-                {data: [], params: {page: 1, per_page: 50, total_pages: 0}, icon: 'people', title: 'Users', component: 'User'}, 
-            ],
+            dataObj: {
+                photos: {data: [], params: {page: 1, per_page: 20, total_pages: 0}, icon: 'insert_photo', title: 'Photos', component: 'Picture'}, 
+                collections: {data: [], params: {page: 1, per_page: 10, total_pages: 0}, icon: 'collections', title: 'Collections', component: 'Collection'},
+                users: {data: [], params: {page: 1, per_page: 50, total_pages: 0}, icon: 'people', title: 'Users', component: 'User'}, 
+            },
             currentTab: null,
             scrollEvent: false,
             showLoadMore: false,
@@ -81,51 +81,56 @@ export default {
         User
     },
     methods:{
-        // Fetches all the data
-        getData(callObj = false, calledType = false){
-            let obj = this.dataObj;
-            if(callObj && typeof callObj == 'object') obj = callObj;
-
+        // Fetches all the data, when component mounts or new value provided
+        getData(){
             // Get all the data for the searched query
-            obj.forEach((reqObj, type) => {
-                if(calledType || calledType === 0) type = calledType;
-                let a = async function(){return await axios.get(`/search/${reqObj.title.toLowerCase()}/${this.searchQry}`, {params: reqObj.params})}.bind(this);
-                a().then(resp => {
-
-                    // Set dat in their relative objects
-                    if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
-                        // Hide load more button
-                        if(this.showLoadMore) this.showLoadMore = false;
-                        // Set Data
-                        this.fetchData(type, resp.data.success.data.results);
-                        
-                        // Set pagination
-                        if(resp.data.success.hasOwnProperty('extra_info')) this.setPagination(type, resp.data.success.extra_info.pagination); 
-                    }
-                }).catch(err => {
-                    this.$store.commit('setApiErr', err.message);
-                });
+            Object.keys(this.dataObj).forEach(type => {
+                // Empty all objects before calling all
+                this.dataObj[type]['data'] = [];
+                
+                // Fetch the data for each single request
+                this.fetchData(type);
             });
         },
 
         // Add data to the called sections
-        fetchData(section = false, data = false){
-            if(!data) return false;
+        async fetchData(section = false){
+            if(!section || !this.dataObj.hasOwnProperty(section)) return false;
+            let obj = this.dataObj[section];
 
-            if(this.dataObj[section]){
-                let obj = this.dataObj[section];
-                data.forEach(row => obj['data'].push(row));
+            // Check if we have already reached last pagination page or not
+            if(obj['params']['total_pages'] && obj['params']['page'] >= obj['params']['total_pages']){
+                this.showLoadMore = false;
+                return false;
             }
-        },
-         
-        // Sets the paginations params
-        setPagination(type, data = false){
-            if(data && this.dataObj.hasOwnProperty(type)){
-                const obj = this.dataObj[type]['params'];
-                Object.keys(obj).forEach(key => {
-                    if(data.hasOwnProperty(key)) obj[key] = data[key];
-                });    
-            }
+
+            await axios.get(`/search/${section}/${this.searchQry}`, {params: obj['params']}).then(function(resp){
+                // Set dat in their relative objects
+                if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
+                    // Hide load more button
+                    if(this.showLoadMore) this.showLoadMore = false;
+                    // Set Data
+                    let data = (resp.data.hasOwnProperty('success')) ? resp.data.success.data.results : false;
+                    if(data){
+                        // First time call
+                        if(obj['data'].length == 0) obj['data'] = data;
+
+                        // Fetching new details
+                        data.forEach(row => obj['data'].push(row));
+                        
+                    }
+                    
+                    // Set pagination
+                    if(resp.data.success.hasOwnProperty('extra_info')){
+                        let pgInfo = resp.data.success.extra_info.pagination;
+                        Object.keys(obj['params']).forEach(key => {
+                            if(pgInfo.hasOwnProperty(key)) obj['params'][key] = pgInfo[key];
+                        });
+                    } 
+                }
+            }.bind(this)).catch(err => {
+                this.$store.commit('setApiErr', err.message);
+            });
         },
 
         // Currently filter users
@@ -167,17 +172,17 @@ export default {
         if(this.apiKey) this.getData();
 
         // On scroll, call next batch
-        this.scrollFunction = () => {
+        this.scrollEvent = () => {
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) this.showLoadMore = true;
             else this.showLoadMore = false;
         };
 
         // On scroll, call next batch
-        window.addEventListener('scroll', this.scrollFunction);
+        if(this.scrollEvent) window.addEventListener('scroll', this.scrollEvent);
     },
     beforeDestroy(){
         // Remove scroll event
-        window.removeEventListener('scroll', this.scrollFunction);
+        if(this.scrollEvent) window.removeEventListener('scroll', this.scrollEvent);
     }
 }
 </script>
