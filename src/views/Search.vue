@@ -1,5 +1,5 @@
 <template>
-   <v-layout row wrap>
+   <v-layout row wrap class="searchPage">
         <v-flex xs12 v-if="searchQry">
             <v-tabs centered icons-and-text color="primary" v-model="currentTab" mandatory fixed>
                 <v-tabs-slider color="white"></v-tabs-slider>
@@ -153,28 +153,39 @@ export default {
                         else parentNode.style.display = "";
                     }
                 })
-            }
-            
+            } 
         }
     },
     watch:{
+        // If search query is changed, trigger new update 
         searchQry(val){
             if(val) this.getData();
         }
     },
     computed:{
+        // Returns the searched query
         searchQry(){
             if(this.$route.query.hasOwnProperty('t') && this.$route.query.t) return this.$route.query.t;
             return false;
         }
     },
     mounted(){
+        // Fetch all search data when component is created
         if(this.apiKey) this.getData();
 
-        // On scroll, call next batch
+        // On scroll,
         this.scrollEvent = () => {
+
+            // Call next api batch after reaching end of the page
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) this.showLoadMore = true;
             else this.showLoadMore = false;
+
+            // Set search Tabs fixed on scroll
+            let tabBar = document.querySelector('div.v-tabs__bar');
+            if(tabBar && (window.scrollY > tabBar.clientHeight)){
+                let fixedClass = tabBar.className.includes('fixed');
+                if(!fixedClass) tabBar.classList.add('fixedBar');
+            }else tabBar.classList.remove('fixedBar');
         };
 
         // On scroll, call next batch
@@ -188,5 +199,10 @@ export default {
 </script>
 
 <style>
-
+    /* This fixes the header on the top after scroll */
+    .searchPage .fixedBar{
+        position:fixed !important;
+        width: 100%;
+        z-index:999999
+    }
 </style>
