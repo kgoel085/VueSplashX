@@ -37,7 +37,7 @@
                     </v-layout>
                     <div class="text-xs-center">
                         <v-slide-y-transition>
-                            <v-btn flat fixed bottom class="primary small elevation-6" v-if="showLoadMore && tab.data.length > 0 && (tab.params.page <= tab.params.total_pages)" @click="fetchData(indx)">Load More</v-btn>
+                            <v-btn flat fixed bottom class="primary small elevation-6" v-if="showLoadMore && !pageEnd" @click="fetchData(indx)">Load More</v-btn>
                         </v-slide-y-transition>
                     </div>
                 </v-tab-item>
@@ -98,12 +98,6 @@ export default {
             if(!section || !this.dataObj.hasOwnProperty(section)) return false;
             let obj = this.dataObj[section];
 
-            // Check if we have already reached last pagination page or not
-            if(obj['params']['total_pages'] && obj['params']['page'] >= obj['params']['total_pages']){
-                this.showLoadMore = false;
-                return false;
-            }
-
             await axios.get(`/search/${section}/${this.searchQry}`, {params: obj['params']}).then(function(resp){
                 // Set dat in their relative objects
                 if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
@@ -117,7 +111,6 @@ export default {
 
                         // Fetching new details
                         data.forEach(row => obj['data'].push(row));
-                        
                     }
                     
                     // Set pagination
@@ -166,6 +159,14 @@ export default {
         // Returns the searched query
         searchQry(){
             if(this.$route.query.hasOwnProperty('t') && this.$route.query.t) return this.$route.query.t;
+            return false;
+        },
+        // Check whether we have more pages to load or not from server
+        pageEnd(){
+            if(this.currentTab && this.dataObj[this.currentTab.replace('tab_', '')]){
+                let obj = this.dataObj[this.currentTab.replace('tab_', '')];
+                if(obj['params']['total_pages'] && obj['params']['page'] <= obj['params']['total_pages']) return true;
+            }
             return false;
         }
     },
