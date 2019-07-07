@@ -104,17 +104,38 @@ export default {
     methods:{
         // Fetches all the data, when component mounts or new value provided
         getData(reset = false){
-            // Get all the data for the searched query
-            Object.keys(this.dataObj).forEach((type, indx) => {
-                // Empty all objects before calling all
-                if(reset) this.dataObj[type]['data'] = [];
-                
-                // Fetch the data for each single request
-                if(indx == 0) this.fetchData(type);
+
+            // Create param arr for searched sections
+            let queryObj = {query: this.searchQry};
+            Object.keys(this.dataObj).forEach(section => {
+                queryObj[section] = this.dataObj[section].params;
+            });
+
+            // Get all the data for the searched query first time on page load
+            axios.get('/search', {params: queryObj}).then(resp => {
+                let data = (resp.data.hasOwnProperty('success') && Object.keys(resp.data.success).length > 0) ?resp.data.success : false;
+
+                if(data){
+                    Object.keys(data).forEach((section, indx) => {
+                        let obj = (this.dataObj.hasOwnProperty(section)) ? this.dataObj[section] : false;
+                        if(obj){
+                            // Params to fetch next page result
+                            obj['params']['page'] = 2;
+                            obj['params']['total_pages'] = data.total_pages;
+
+                            // Store the received data
+                            let response = data[section]['data']['results'];
+                            if(data[section]['data']['results'] && data[section]['data']['results'].length > 0) response.forEach(elem => obj['data'].push(elem));
+                            else obj['data'] = {error: 'No results found !'};
+                        }
+                    });
+                }
+            }).catch(err => {
+                this.$store.commit('setApiErr', err.message);
             });
         },
 
-        // Add data to the called sections
+        // Add data to the called section initial load
         async fetchData(section = false){
             if(!section || !this.dataObj.hasOwnProperty(section)) return false;
             let obj = this.dataObj[section];
@@ -180,14 +201,6 @@ export default {
         // If search query is changed, trigger new update 
         searchQry(val){
             if(val) this.getData(true);
-        },
-
-        // Check if tab was changed
-        currentTab(val){
-            if(!val) return false;
-
-            val = val.replace('tab-', '');
-            if(this.dataObj.hasOwnProperty(val) && typeof this.dataObj[val]['data'] == 'object' && this.dataObj[val]['data'].length == 0) this.fetchData(val);
         }
     },
     computed:{
