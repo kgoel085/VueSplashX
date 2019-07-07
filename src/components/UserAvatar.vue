@@ -2,7 +2,7 @@
     <v-list-tile left class="usrAvataR" :data-user="data.name.toLowerCase()">
         <template v-if="data">
             <!-- Show user with name -->
-            <v-list-tile-avatar text-color="white" @click.stop="showUser = !showUser" :size="userChipSize">
+            <v-list-tile-avatar text-color="white" @click.stop="showUser = !showUser" @contextmenu.stop="visitUser($event, '@'+data.username)" :size="userChipSize">
                 <img :src="userImg" :alt="data.name" class="elevation-8">
             </v-list-tile-avatar>
 
@@ -59,6 +59,12 @@ export default {
             }else{
                 if(vm.userIntervalObj) clearInterval(vm.userIntervalObj);
             }
+        }
+    },
+    methods:{
+        visitUser(e, user){
+            e.preventDefault();
+            this.$router.push({name: 'user', params:{user: user}});
         }
     },
     computed:{

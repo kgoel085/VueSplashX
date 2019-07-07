@@ -46,8 +46,8 @@
                         </template>
 
                         <v-list>
-                            <v-list-tile>
-                                <v-list-tile-title>View Profile</v-list-tile-title>
+                            <v-list-tile :to="'/user/@'+$store.state.usrDetails.username">
+                                <v-list-tile-title >View Profile</v-list-tile-title>
                             </v-list-tile>
                             <v-list-tile>
                                 <v-list-tile-title>View Collections</v-list-tile-title>

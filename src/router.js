@@ -41,6 +41,18 @@ let router =  new Router({
       path: '/search/:t?',
       name: 'search',
       component: () => import('./views/Search.vue')
+    },
+    {
+      path: '/user/:user',
+      name: 'user',
+      component: () => import('./views/User.vue'),
+      children:[
+        {
+          path: 'me',
+          name: 'user.private',
+          component: () => import('./views/User.vue')
+        }
+      ]
     }
   ]
 })
