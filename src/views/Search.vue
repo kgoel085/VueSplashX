@@ -4,7 +4,7 @@
             <v-tabs centered icons-and-text color="primary" v-model="currentTab" mandatory fixed>
                 <v-tabs-slider color="white"></v-tabs-slider>
 
-                <v-tab v-for="(tab, indx) in dataObj" :key="indx" :href="'#tab-'+indx" class="white--text" :disabled="tab.data.length == 0">
+                <v-tab v-for="(tab, indx) in dataObj" :key="indx" :href="'#tab-'+indx" class="white--text">
                     {{ tab.title }}
                     <v-icon>{{ tab.icon }}</v-icon>
                 </v-tab>
@@ -12,29 +12,50 @@
                 <v-tab-item v-for="(tab, indx) in dataObj" :key="indx" :value="'tab-'+indx" lazy>
                     <Loader v-if="!tab.hasOwnProperty('component') && tab.data.length == 0"></Loader>
                     <v-layout row wrap v-else :id="'tab-'+indx">
-                        <template v-if="indx !== 'users'">
-                            <component v-for="(data, indx) in tab.data" :key="indx" :is="tab.component" :obj="data"></component>
-                        </template>
-                        <template v-else>
-                            <v-flex xs12 class="pa-1 ma-1">
-                                <v-text-field
-                                    placeholder="Filter User"
-                                    color="white"
-                                    clearable
-                                    flat
-                                    light
-                                    class="px-4"
-                                    v-model="searchText"
-                                    @keyup="doSearch()"
-                                ></v-text-field>
-                            </v-flex>
-                            <v-flex v-for="(data, indx) in tab.data" :key="indx" class="py-1 mt-1">
-                                <v-card flat :height="100">
-                                   <User :obj="data" :userShow="true"></User>
+
+                        <!-- No result or any error block -->
+                        <template v-if="typeof tab.data == 'object' && tab.data.hasOwnProperty('error')">
+                            <v-flex xs12 align-content-center="">
+                                <v-card flat tile class="pa-3 ma-3 text-xs-center">
+                                    <v-card-text>
+                                       <p>
+                                           <v-icon>face</v-icon>
+                                       </p>
+                                       <p>
+                                           {{ tab.data.error }}
+                                       </p>
+                                    </v-card-text>
                                 </v-card>
                             </v-flex>
                         </template>
+                        <template v-else>
+                            <template v-if="indx !== 'users'">
+                                <!-- Photos, Collection tabs -->
+                                <component v-for="(data, indx) in tab.data" :key="indx" :is="tab.component" :obj="data"></component>
+                            </template>
+                            <template v-else>
+                                <!-- User tabs -->
+                                <v-flex xs12 class="pa-1 ma-1">
+                                    <v-text-field
+                                        placeholder="Filter User"
+                                        color="white"
+                                        clearable
+                                        flat
+                                        light
+                                        class="px-4"
+                                        v-model="searchText"
+                                        @keyup="doSearch()"
+                                    ></v-text-field>
+                                </v-flex>
+                                <v-flex v-for="(data, indx) in tab.data" :key="indx" class="py-1 mt-1">
+                                    <v-card flat :height="100">
+                                    <User :obj="data" :userShow="true"></User>
+                                    </v-card>
+                                </v-flex>
+                            </template>
+                        </template>
                     </v-layout>
+                    <!-- load next result page for current tab -->
                     <div class="text-xs-center">
                         <v-slide-y-transition>
                             <v-btn flat fixed bottom class="primary small elevation-6" v-if="showLoadMore && !pageEnd" @click="fetchData(indx)">Load More</v-btn>
@@ -82,14 +103,14 @@ export default {
     },
     methods:{
         // Fetches all the data, when component mounts or new value provided
-        getData(){
+        getData(reset = false){
             // Get all the data for the searched query
-            Object.keys(this.dataObj).forEach(type => {
+            Object.keys(this.dataObj).forEach((type, indx) => {
                 // Empty all objects before calling all
-                this.dataObj[type]['data'] = [];
+                if(reset) this.dataObj[type]['data'] = [];
                 
                 // Fetch the data for each single request
-                this.fetchData(type);
+                if(indx == 0) this.fetchData(type);
             });
         },
 
@@ -99,18 +120,24 @@ export default {
             let obj = this.dataObj[section];
 
             await axios.get(`/search/${section}/${this.searchQry}`, {params: obj['params']}).then(function(resp){
+
                 // Set dat in their relative objects
                 if(resp.hasOwnProperty('data') && resp.data.hasOwnProperty('success')){
+
                     // Hide load more button
                     if(this.showLoadMore) this.showLoadMore = false;
+
                     // Set Data
-                    let data = (resp.data.hasOwnProperty('success')) ? resp.data.success.data.results : false;
+                    let data = (resp.data.hasOwnProperty('success') && resp.data.success.data.total > 0) ? resp.data.success.data.results : false;
                     if(data){
                         // First time call
                         if(obj['data'].length == 0) obj['data'] = data;
 
                         // Fetching new details
                         data.forEach(row => obj['data'].push(row));
+                    }else{
+                        // If no result found or any other error
+                        obj['data'] = {error: 'No results found !'};
                     }
                     
                     // Set pagination
@@ -152,7 +179,15 @@ export default {
     watch:{
         // If search query is changed, trigger new update 
         searchQry(val){
-            if(val) this.getData();
+            if(val) this.getData(true);
+        },
+
+        // Check if tab was changed
+        currentTab(val){
+            if(!val) return false;
+
+            val = val.replace('tab-', '');
+            if(this.dataObj.hasOwnProperty(val) && typeof this.dataObj[val]['data'] == 'object' && this.dataObj[val]['data'].length == 0) this.fetchData(val);
         }
     },
     computed:{
