@@ -1,22 +1,24 @@
 <template>
-    <span>Test USer Component - {{ username }}</span>
+    <v-layout align-center class="user_page">
+        
+    </v-layout>
 </template>
 
 <script>
 import axios from 'axios';
-import { close } from 'fs';
 
 export default {
     data(){
         return {
             callPoints: {
                 user: {data: false},
-                portfolio: {action: 'portfolio', data: false},
-                photos: {action: 'photos', data: false},
-                collections: {action: 'collections', data: false},
-                liked: {action: 'liked', data: false},
-                statistics: {action: 'statistics', data: false},
-            }
+                portfolio: {data: false},
+                photos: {data: false, params: {total: 0, page: 1}},
+                collections: {data: false, params: {total: 0, page: 1}},
+                likes: {data: false, params: {total: 0, page: 1}},
+                statistics: {data: false},
+            },
+            currentWindow: 0
         }
     },
     computed:{
@@ -48,12 +50,23 @@ export default {
         },
 
         // Fetches all the other information like photos, collections etc
-        getData(){
-            let callPoints = Object.keys(this.callPoints);
-            for(const point of callPoints){
-                const data = this.fetchData(point);
-                if(data) continue;
-            }
+        async getData(){
+            if(!this.username) return false;
+            await axios.get(`/users/${this.username}/details`).then(resp => {
+                let data = (resp.data.hasOwnProperty('success')) ? resp.data.success : false;
+                if(data){
+
+                    // Loop through each action item
+                    Object.keys(data).forEach(section => {
+                        //If some data is there , store it
+                        if(Object.keys(data[section]).length > 0 && this.callPoints.hasOwnProperty(section) && data[section].hasOwnProperty('data')){
+                            this.callPoints[section]['data'] = data[section]['data'];
+                        }
+                    });
+                }
+            }).catch(err => {
+                this.$store.commit('setApiErr', err.message);
+            })
         }
     },
     mounted(){
