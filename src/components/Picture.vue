@@ -8,9 +8,7 @@
             <v-img :src="blockImg" :lazy-src="`https://picsum.photos/10/6?image`" aspect-ratio="1" class="white lighten-2 pa-4" height="100%">
                 <!-- Image Loader -->
                 <template v-slot:placeholder>
-                    <v-layout fill-height align-center justify-center ma-0>
-                        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
-                    </v-layout>
+                    <Loader ></Loader>
                 </template>
             </v-img>
         </v-card>
