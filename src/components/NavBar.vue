@@ -1,5 +1,5 @@
 <template>
-    <nav v-if="hideNav">
+    <div v-if="hideNav">
         <v-toolbar app dense fixed flat card class="primary navBar">
             <!-- Title -->
             <v-toolbar-title class="headline text-uppercase">
@@ -63,7 +63,7 @@
                 </template>
             </v-toolbar-items>
         </v-toolbar>
-    </nav>
+    </div>
 </template>
 
 <script>

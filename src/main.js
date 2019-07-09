@@ -100,7 +100,10 @@ Vue.mixin({
       // Image height
       if(mainObj.height){
         returnVal.height = mainObj.height / 2;
-        returnVal.origHeight = mainObj.height;
+
+        // Subtract header height
+        let headerHeight = (document.querySelector('nav').clientHeight) ? mainObj.height - document.querySelector('nav').clientHeight : mainObj.height;
+        returnVal.origHeight = headerHeight;
       }
 
       // Manage size & breakpoint
