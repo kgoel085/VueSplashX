@@ -58,7 +58,7 @@
                     <!-- load next result page for current tab -->
                     <div class="text-xs-center">
                         <v-slide-y-transition>
-                            <v-btn flat fixed bottom class="primary small elevation-6" v-if="showLoadMore && !pageEnd" @click="fetchData(indx)">Load More</v-btn>
+                            <v-btn :loading="showLoading" flat fixed bottom class="primary small elevation-6" v-if="showLoadMore && !pageEnd" @click="fetchData(indx)">Load More</v-btn>
                         </v-slide-y-transition>
                     </div>
                 </v-tab-item>
@@ -92,7 +92,8 @@ export default {
             currentTab: null,
             scrollEvent: false,
             showLoadMore: false,
-            searchText: null
+            searchText: null,
+            showLoading: false
         }
     },
     components:{
@@ -140,6 +141,8 @@ export default {
             if(!section || !this.dataObj.hasOwnProperty(section)) return false;
             let obj = this.dataObj[section];
 
+            this.showLoading = true;
+
             await axios.get(`/search/${section}/${this.searchQry}`, {params: obj['params']}).then(function(resp){
 
                 // Set dat in their relative objects
@@ -147,6 +150,7 @@ export default {
 
                     // Hide load more button
                     if(this.showLoadMore) this.showLoadMore = false;
+                    this.showLoading = false;
 
                     // Set Data
                     let data = (resp.data.hasOwnProperty('success') && resp.data.success.data.total > 0) ? resp.data.success.data.results : false;
