@@ -5,7 +5,7 @@
                 <UserAvatar :obj="data.user"></UserAvatar>
             </v-card-title>
 
-            <v-img :src="blockImg" :lazy-src="`https://picsum.photos/10/6?image`" aspect-ratio="1" class="white lighten-2 pa-4" height="100%">
+            <v-img :src="blockImg" aspect-ratio="1" class="white lighten-2 pa-4" height="100%">
                 <!-- Image Loader -->
                 <template v-slot:placeholder>
                     <Loader ></Loader>
