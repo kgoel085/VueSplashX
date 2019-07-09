@@ -1,12 +1,18 @@
 <template>
     <v-flex :[blockSize] = true class="pictureBlock">
-        <v-card :height="dimensionObj.height+'px'" class="pa-2 ma-2" flat :[showHover] = "imgLoaded" raised :img="blockImg" @click="showPic(data.id)">
-            <Loader v-if="!imgLoaded"/>
-            <template v-else>
-                <v-card-title primary-title class="px-0 pt-1 ma-0" >
-                    <UserAvatar :obj="data.user"></UserAvatar>
-                </v-card-title>
-            </template>
+        <v-card :height="dimensionObj.height+'px'" class="pa-2 ma-2" flat raised @click="showPic(data.id)" style="position:relative">
+            <v-card-title primary-title class="px-0 pt-1 ma-0 picUsr">
+                <UserAvatar :obj="data.user"></UserAvatar>
+            </v-card-title>
+
+            <v-img :src="blockImg" :lazy-src="`https://picsum.photos/10/6?image`" aspect-ratio="1" class="white lighten-2 pa-4" height="100%">
+                <!-- Image Loader -->
+                <template v-slot:placeholder>
+                    <v-layout fill-height align-center justify-center ma-0>
+                        <v-progress-circular indeterminate color="grey lighten-5"></v-progress-circular>
+                    </v-layout>
+                </template>
+            </v-img>
         </v-card>
     </v-flex>
 </template>
@@ -18,7 +24,6 @@ import UserAvatar from '@/components/UserAvatar';
 export default {
     data(){
         return {
-            imgLoaded: false,
             showHover: 'hover'
         }
     },
@@ -37,9 +42,6 @@ export default {
             let vm = this;
             if(this.data){
                 let img = this.data.urls[this.dimensionObj.imgType]+'&auto=format';
-                setTimeout(() => {
-                    vm.imgLoaded = true;
-                }, 1000);
                 return img;
             }
             return false;
@@ -78,5 +80,10 @@ export default {
 
     .pictureBlock .v-avatar img:hover{
         cursor:pointer
+    }
+
+    .pictureBlock .picUsr{
+        position:absolute;
+        z-index:9
     }
 </style>
