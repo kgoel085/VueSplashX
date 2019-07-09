@@ -1,11 +1,35 @@
 <template>
-    <v-layout align-center class="user_page">
-        
+    <v-layout class="user_page" fill-height align-center justify-center row wrap>
+
+        <!-- User Block -->
+        <v-flex xs12 fill-height align-self-center v-if="callPoints.user.data">
+            <v-card flat :height="getHeight(30)+'px'" class="pa-3">
+                <v-layout row>
+                    <v-flex xs12 sm12 md2 lg2 xl2 offset-md4 offset-lg4>
+                        <v-avatar :size="getHeight(80, getHeight(30))+'px'">
+                            <v-img :src="callPoints.user.data.profile_image.large" :lazy-src="`https://picsum.photos/10/6?image`" aspect-ratio="1" class="white lighten-2 pa-4" height="100%">
+                                <template v-slot:placeholder>
+                                <Loader></Loader>
+                                </template>
+                            </v-img>
+                        </v-avatar>
+                    </v-flex>
+                    <v-flex xs12 sm12 md6 lg6 xl6>
+                        <v-card-title primary-title>
+                            <div>
+                                <div class="headline">Test User</div>
+                            </div>
+                        </v-card-title>
+                    </v-flex>
+                </v-layout>
+            </v-card>
+        </v-flex>
     </v-layout>
 </template>
 
 <script>
 import axios from 'axios';
+import Loader from '@/components/Loader';
 
 export default {
     data(){
@@ -20,6 +44,9 @@ export default {
             },
             currentWindow: 0
         }
+    },
+    components:{
+        Loader
     },
     computed:{
         // User name received
@@ -67,6 +94,14 @@ export default {
             }).catch(err => {
                 this.$store.commit('setApiErr', err.message);
             })
+        },
+
+        // Returns a specific percent of available height or given height
+        getHeight(percent = 100, specificHeight = 0){
+            if(!percent || parseInt(percent) === 0) percent = 100;
+
+            let totalHeight = (specificHeight || parseInt(specificHeight) === true) ? specificHeight : this.dimensionObj.origHeight;
+            return (totalHeight * percent) / 100;
         }
     },
     mounted(){
@@ -76,5 +111,5 @@ export default {
 </script>
 
 <style>
-
+    
 </style>
