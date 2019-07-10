@@ -15,10 +15,15 @@
                 <v-carousel-item
                 v-for="(item,i) in data.preview_photos"
                 :key="i"
-                :src="item.urls[dimensionObj.imgType]"
                  @click="showCollectionPic(data.id)"
                 :alt="data.title"
                 >
+                    <v-img :src="item.urls[dimensionObj.imgType]" aspect-ratio="1" class="white lighten-2 pa-4" height="100%">
+                        <!-- Image Loader -->
+                        <template v-slot:placeholder>
+                            <Loader ></Loader>
+                        </template>
+                    </v-img>
                 </v-carousel-item>
 
                 <v-card light flat tile class="grow collection_details transparent">
@@ -38,6 +43,7 @@
 <script>
 import axios from 'axios';
 import UserAvatar from '@/components/UserAvatar';
+import Loader from '@/components/Loader'
 
 export default {
     data(){
@@ -46,7 +52,8 @@ export default {
         }
     },
     components:{
-        UserAvatar
+        UserAvatar,
+        Loader
     },
     computed:{
         blockSize(){
