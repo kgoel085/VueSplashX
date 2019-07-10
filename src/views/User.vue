@@ -42,8 +42,25 @@
                 </v-tab>
                 <v-tab-item v-for="(data,indx) in dataObj['tab']" :key="indx" :disabled="data === false && data.hasOwnProperty('component')">
                     <v-layout row wrap>
-                        <!-- Photos, Collection tabs -->
-                        <component v-for="(data, indx1) in data" :key="indx1" :is="callPoints[indx].component" :obj="data"></component>  
+                        <!-- No result or any error block -->
+                        <template v-if="typeof data == 'object' && data.hasOwnProperty('error')">
+                            <v-flex xs12 align-content-center="">
+                                <v-card flat tile class="pa-3 ma-3 text-xs-center">
+                                    <v-card-text>
+                                       <p>
+                                           <v-icon>face</v-icon>
+                                       </p>
+                                       <p>
+                                           {{ tab.data.error }}
+                                       </p>
+                                    </v-card-text>
+                                </v-card>
+                            </v-flex>
+                        </template>
+                        <template v-else>
+                            <!-- Photos, Collection tabs -->
+                            <component v-for="(data, indx1) in data" :key="indx1" :is="callPoints[indx].component" :obj="data"></component> 
+                        </template> 
                     </v-layout>
 
                     <!-- load next result page for current tab -->
@@ -69,9 +86,9 @@ export default {
         return {
             callPoints: {
                 user: {data: false},
-                photos: {data: false, params: {total: 0, page: 2}, component: 'Picture'},
-                collections: {data: false, params: {total: 0, page: 2}, component: 'Collection'},
-                likes: {data: false, params: {total: 0, page: 2}, component: 'Picture'},
+                photos: {data: false, params: {total_pages: 0, page: 2}, component: 'Picture'},
+                collections: {data: false, params: {total_pages: 0, page: 2}, component: 'Collection'},
+                likes: {data: false, params: {total_pages: 0, page: 2}, component: 'Picture'},
                 statistics: {data: false},
             },
             currentWindow: 0,
@@ -111,9 +128,11 @@ export default {
 
         // Check whether we have more pages to load or not from server
         pageEnd(){
-            if(this.currentTab && this.dataObj[this.currentTab]){
-                let obj = this.dataObj[this.currentTab];
-                if(obj['params']['total_pages'] && obj['params']['page'] <= obj['params']['total_pages']) return true;
+            let objKeys = Object.keys(this.dataObj['tab']);
+            if(this.dataObj['tab'].hasOwnProperty(objKeys[this.currentTab])){
+                let obj = this.dataObj['tab'][objKeys[this.currentTab]];
+                let {total_pages: total} = this.callPoints[objKeys[this.currentTab]]['params'];
+                if(typeof obj == 'object' && obj.length <= total) return true;
             }
             return false;
         }
@@ -135,6 +154,9 @@ export default {
 
                     // Fetching new details
                     endData.forEach(row => obj['data'].push(row));
+                }else{
+                    // If no result found or any other error
+                    obj['data'] = {error: 'No results found !'};
                 }
 
                 // Set pagination
