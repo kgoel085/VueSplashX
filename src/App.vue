@@ -38,7 +38,7 @@
 <script>
 import NavBar from './components/NavBar'
 import LiveStat from './components/LiveStat'
-import Dialog from './components/Dialog'
+import Dialog from './components/PictureDialog'
 
 export default {
   name: 'App',
