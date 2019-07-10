@@ -56,7 +56,7 @@ export default {
         },
 
         downloadPic(id){
-            this.$store.commit('downloadPictureId', id);
+            this.$store.commit('downloadPictureId', this.data.urls['raw']);
         }
     },
     props:{
