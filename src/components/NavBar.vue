@@ -36,7 +36,7 @@
                     {{ item.title }}
                 </v-btn>
 
-                <template v-if="!$store.state.usrDetails">
+                <template v-if="!$store.state.usrDetails || usrToken === false">
                     <v-btn flat class="white--text" @click="initLogin()" >Login</v-btn>
                 </template>
                 <template v-else>
