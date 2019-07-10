@@ -27,7 +27,7 @@
 
             <v-spacer></v-spacer>
 
-            <v-toolbar-items class="hidden-sm-and-down">
+            <v-toolbar-items class="">
                 <v-btn flat icon class="white--text" @click="showSearch = !showSearch">
                     <v-icon>search</v-icon>
                 </v-btn>
