@@ -32,20 +32,25 @@
 
     <!-- Dialog Box -->
     <Dialog v-model="showDialog" v-if="showDialog"></Dialog>
+
+    <!-- Download Dialog Box -->
+    <DownloadDialog v-model="downloadDialog" v-if="downloadDialog"></DownloadDialog>
   </v-app>
 </template>
 
 <script>
-import NavBar from './components/NavBar'
-import LiveStat from './components/LiveStat'
-import Dialog from './components/PictureDialog'
+import NavBar from '@/components/NavBar'
+import LiveStat from '@/components/LiveStat'
+import Dialog from '@/components/PictureDialog'
+import DownloadDialog from '@/components/DownloadDialog'
 
 export default {
   name: 'App',
   components: {
     NavBar,
     LiveStat,
-    Dialog
+    Dialog,
+    DownloadDialog
   },
   data () {
     return {
@@ -92,6 +97,12 @@ export default {
     // Handle the picture dialog box
     showDialog(){
       if(this.$store.state.showPic) return true;
+      return false;
+    },
+
+    // Handle the picture download box
+    downloadDialog(){
+      if(this.$store.state.downloadPic) return true;
       return false;
     }
   }
