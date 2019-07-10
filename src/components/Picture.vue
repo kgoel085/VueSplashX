@@ -11,6 +11,10 @@
                     <Loader ></Loader>
                 </template>
             </v-img>
+
+            <v-btn class="bottomSection" right fab light color="primary my-3" @click.stop="downloadPic(data.id)">
+                <v-icon dark>arrow_downward</v-icon>
+            </v-btn>
         </v-card>
     </v-flex>
 </template>
@@ -49,6 +53,10 @@ export default {
         showPic(id){
             this.$store.commit('showPictureId', id);
             //this.$store.commit('setPicDetails', this.details);
+        },
+
+        downloadPic(id){
+            this.$store.commit('downloadPictureId', id);
         }
     },
     props:{
@@ -73,7 +81,6 @@ export default {
     .pictureBlock .bottomSection{
         position:absolute;
         bottom:0;
-        left:0
     }
 
     .pictureBlock .v-avatar img:hover{

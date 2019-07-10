@@ -48,6 +48,9 @@ export default new Vuex.Store({
     // Show picture
     showPic: null,
 
+    // Download picture
+    downloadPic: null,
+
     // If set, then picture details will be used from here, else showPic will be used
     picObj: null,
 
@@ -85,6 +88,11 @@ export default new Vuex.Store({
     // Set Picture id to show
     showPictureId(state, picId = null){
       state.showPic = picId;
+    },
+
+    // Set Picture id to download
+    downloadPictureId(state, picId = null){
+      state.downloadPic = picId;
     },
 
     // Store the current picture object
