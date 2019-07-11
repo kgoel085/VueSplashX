@@ -26,8 +26,8 @@
                     <v-card class="text-xs-center">
                         <v-layout row wrap>
                             <v-flex xs12 pa-1>
-                                <v-card :height="getHeight(60)+'px'">
-                                     <v-img :src="imgUrl" :height="'100%'" :width="'100%'">
+                                <v-card :height="getHeight(60)+'px'" style="position: relative">
+                                     <v-img :src="imgUrl" :height="'100%'" contain :width="'100%'" style="position: absolute">
                                         <!-- Image Loader -->
                                         <template v-slot:placeholder>
                                             <Loader ></Loader>
@@ -38,9 +38,21 @@
                             <v-flex xs12 pa-3>
                                 <v-layout row wrap>
                                     <v-flex xs6 pa-2>
+                                        <v-text-field
+                                            label="Width"
+                                            placeholder="Width"
+                                            solo
+                                            :value="screenDim.width.value"
+                                        ></v-text-field>
                                         <v-slider :min="screenDim.width.min" :max="screenDim.width.max" v-model="screenDim.width.value"></v-slider>
                                     </v-flex>
                                     <v-flex xs6 pa-2>
+                                        <v-text-field
+                                            label="Height"
+                                            placeholder="Height"
+                                            solo
+                                            :value="screenDim.height.value"
+                                        ></v-text-field>
                                         <v-slider :min="screenDim.height.min" :max="screenDim.height.max" v-model="screenDim.height.value"></v-slider>
                                     </v-flex>
                                 </v-layout>
@@ -76,7 +88,7 @@ export default {
             dataLoaded: false,
             screenDim:{
                 width: {min: 300, max: 2600, value: 2600},
-                height: {min: 300, max: 2600, value: this.mainHeight}
+                height: {min: 300, max: 2600, value: 2600}
             }
         }
     },
@@ -97,7 +109,7 @@ export default {
             return (totalHeight * percent) / 100;
         },
         download(picId){
-            window.open(picId);
+            window.open(`${picId}&w=${this.screenDim.width.value}&h=${this.screenDim.height.value}`);
             //this.$store.commit('downloadPictureId', null);
         }
     },
