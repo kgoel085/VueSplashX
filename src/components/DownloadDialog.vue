@@ -1,10 +1,11 @@
 <template>
-    <v-layout row justify-center class="downloadDiag">
-        <v-dialog v-model="dialog" :fullscreen="$vuetify.breakpoint.smAndDown" light full-width max-width="90%" :loading="loading" @input="v = v || hideDialogBox()" transition="dialog-bottom-transition">
-            <v-layout row wrap>
+    <v-layout row justify-center>
+        <v-dialog v-model="dialog" :fullscreen="$vuetify.breakpoint.smAndDown" light full-width max-width="90%" :loading="loading" @input="v = v || hideDialogBox()" transition="dialog-bottom-transition" class="downloadDiag" >
+            
+            <!-- Loader -->
+            <v-layout row wrap v-if="!dataLoaded">
                 <v-flex xs12>
-                    <!-- Loader -->
-                    <v-card color="primary" dark v-if="!dataLoaded">
+                    <v-card color="primary" dark >
                         <v-card-text>
                         Please stand by
                         <v-progress-linear
@@ -14,28 +15,48 @@
                         ></v-progress-linear>
                         </v-card-text>
                     </v-card>
-                    <v-card v-else :height="getHeight(90)+'px'">
-                        <v-img :src="$store.state.downloadPic" :height="getHeight(80, getHeight(90)) + 'px'"></v-img>
-                        <v-card-text>
-                            <v-layout row wrap>
-                                <v-flex class="grow">
-                                    <v-slider
-                                        v-model="screen"
-                                        :tick-labels="screenSize"
-                                        :max="screenSize.length - 1"
-                                        step="1"
-                                        ticks="always"
-                                        tick-size="1"
-                                    ></v-slider>
-                                </v-flex>
-                                <v-flex class="shrink">
-                                    <v-btn flat @click="download($store.state.downloadPic)">
-                                        Download
-                                    </v-btn>
-                                </v-flex>
-                            </v-layout>
-                            
-                        </v-card-text>
+                </v-flex>
+            </v-layout>
+
+            <!-- Load Content -->
+            <v-layout row wrap v-else>
+
+                <!-- Image Container -->
+                <v-flex xs12>
+                    <v-card class="text-xs-center">
+                        <v-layout row wrap>
+                            <v-flex xs12 pa-1>
+                                <v-card :height="getHeight(60)+'px'">
+                                     <v-img :src="imgUrl" :height="'100%'" :width="'100%'">
+                                        <!-- Image Loader -->
+                                        <template v-slot:placeholder>
+                                            <Loader ></Loader>
+                                        </template>
+                                    </v-img>
+                                </v-card>
+                            </v-flex>
+                            <v-flex xs12 pa-3>
+                                <v-layout row wrap>
+                                    <v-flex xs6 pa-2>
+                                        <v-slider :min="screenDim.width.min" :max="screenDim.width.max" v-model="screenDim.width.value"></v-slider>
+                                    </v-flex>
+                                    <v-flex xs6 pa-2>
+                                        <v-slider :min="screenDim.height.min" :max="screenDim.height.max" v-model="screenDim.height.value"></v-slider>
+                                    </v-flex>
+                                </v-layout>
+                            </v-flex>
+                        </v-layout>
+                        <v-layout row wrap>
+                            <v-flex xs12>
+                                
+                                
+                            </v-flex>
+                            <v-flex xs12 class="text-xs-center">
+                                <v-btn class="" flat @click="download(imgUrl)" >
+                                    Download
+                                </v-btn>
+                            </v-flex>
+                        </v-layout>
                     </v-card>
                 </v-flex>
             </v-layout>
@@ -45,6 +66,7 @@
 
 <script>
 import axios from 'axios';
+import Loader from '@/components/Loader';
 
 export default {
     data(){
@@ -52,11 +74,14 @@ export default {
             dialog: this.value,
             loading: true,
             dataLoaded: false,
-            screen: false,
-            screenSize: [
-                '300px', '600px', '800px', '1080px', '2560px'
-            ]
+            screenDim:{
+                width: {min: 300, max: 2600, value: 2600},
+                height: {min: 300, max: 2600, value: this.mainHeight}
+            }
         }
+    },
+    components:{
+        Loader
     },
     methods:{
         // When dialog box closes, clear the state variable for the dialog 
@@ -73,7 +98,12 @@ export default {
         },
         download(picId){
             window.open(picId);
-            this.$store.commit('downloadPictureId', null);
+            //this.$store.commit('downloadPictureId', null);
+        }
+    },
+    computed:{
+        imgUrl(){
+            return `${this.$store.state.downloadPic}`;
         }
     },
     props:{
